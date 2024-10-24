@@ -1,0 +1,48 @@
+<table class='table table-bordered text-center'>
+                    
+                    <?php $i = 0;
+                    $firstIteration = true;
+                    foreach ($_SESSION['getReciept'] as $rows) :
+                        $items = $cartObj->getMenuForReciept($rows['menuId']);
+                        
+                        if ($firstIteration) {
+                            // Output the static rows only on the first iteration
+                            ?>
+                            <tr>
+                                <th>Delivery Address</th>
+                                <td colspan="2"><?= $cartObj->getaddressForReciept($_SESSION['reg_id'])[0]; ?></td>
+                            </tr>
+                            <tr>
+                                <th>Payment method</th>
+                                <td colspan="2"><?= $cartObj->getaddressForReciept($_SESSION['reg_id'])[1]; ?></td>
+                            </tr>
+                            <tr>
+                                <th>Items</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                            </tr>
+                            <?php
+                            $firstIteration = false; // Set the flag to false after the first iteration
+                        }
+                        ?>
+                        <tr>
+                            <td><?= $items[0] ?></th>
+                            <td><?= $items[1] ?></th>
+                            <td><?= $rows['qty'] ?></th>
+                        </tr>
+                    <?php
+
+                    $subtotal = ($items[1] * $rows['qty']);
+
+
+                    $totalamount+=$subtotal;
+
+                    $i++;
+                    endforeach; ?>
+                    <tfoot>
+                        <tr>
+                            <th>Total Amount:</th>
+                            <td colspan="2"><span class="text-danger"><?= $totalamount ?></span></td>
+                        </tr>
+                    </tfoot>
+                </table>
