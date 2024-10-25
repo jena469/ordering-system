@@ -10,26 +10,26 @@ if (isset($_GET['list_reviews']) && isset($_GET['menu_id'])) {
 
     echo json_encode([
         'message' => $response,
-        'status'  => 'success'
+        'status' => 'success'
     ]);
 
     die();
 }
 
 
-if (!isset($_POST['CheckOut'])) : ?>
+if (!isset($_POST['CheckOut'])): ?>
 
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>
+<head>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
 
-    <body>
-    <?php endif; ?>
+<body>
+	<?php endif; ?>
 
-    <?php
+	<?php
     session_start();
     require('./Class/TilesCounter.php');
     require('./Class/ParcelClient.php');
@@ -132,7 +132,7 @@ if (!isset($_POST['CheckOut'])) : ?>
         if ($response['status'] == 'success') {
 
             $_SESSION['reg_id'] = $response['message']['reg_id'];
-            $_SESSION['customerName'] = $response['message']['fname'] . ' ' . $response['message']['m_name']. ' ' . $response['message']['lname'];
+            $_SESSION['customerName'] = $response['message']['fname'] . ' ' . $response['message']['m_name'] . ' ' . $response['message']['lname'];
             $_SESSION['user'] = 'user';
 
             url(
@@ -349,17 +349,17 @@ if (!isset($_POST['CheckOut'])) : ?>
         //         'foodMenu.php'
         //     );
         // } else {
-
+    
         //     url(
         //         'error',
         //         $response['message'],
         //         'foodMenu.php'
         //     );
         // }
-
+    
         // die();
     }
-    
+
     if (isset($_POST['UpdateFood'])) {
 
         $response = $menuObj->updateFoodMenu(
@@ -487,17 +487,17 @@ if (!isset($_POST['CheckOut'])) : ?>
 
             echo json_encode([
                 'message' => 'Order placed Successfully.',
-                'status'  => 'success'
+                'status' => 'success'
             ]);
         } elseif ($response['status'] == 'warning') {
             echo json_encode([
                 'message' => 'Empty Cart Please Try Agin!',
-                'status'  => 'warning'
+                'status' => 'warning'
             ]);
         } else {
             echo json_encode([
                 'message' => $response['message'],
-                'error'   => 'warning'
+                'error' => 'warning'
             ]);
         }
         die();
@@ -630,9 +630,9 @@ if (!isset($_POST['CheckOut'])) : ?>
             $notavail = $row['stocks'] == 0 ? "Not Available" : '';
             $disabled = $row['stocks'] == 0 ? "disabled" : '';
             $opacity = $row['stocks'] == 0 ? "opacity: 0.4" : '';
-            
 
-            $ratesTotal    = $menuObj->totalRatingsPerProducts($row['menu_id']);
+
+            $ratesTotal = $menuObj->totalRatingsPerProducts($row['menu_id']);
             $commentsTotal = $menuObj->totalCommentsPerProducts($row['menu_id']);
             $stocks = $row["stocks"];
             echo '
@@ -687,14 +687,14 @@ if (!isset($_POST['CheckOut'])) : ?>
                         <script>
                             let num' . $d . ' = 0;
                             btnMinus' . $a . '.onclick = () => {
-                                if(num' . $d . ' != 0) {
+                                if(num' . $d . ' != 1) {
 
-                                    document.querySelector("#input' . $b . '").value = num' . $d . '--;
+                                    document.querySelector("#input' . $b . '").value = --num' . $d . ';
                                 }
                             }
 
                             btnAdd' . $c . '.onclick = () => {
-                                document.querySelector("#input' . $b . '").value =num' . $d . '++;
+                                document.querySelector("#input' . $b . '").value = ++num' . $d . ';
                                 
                                 if(' . $row['stocks'] . ' < 1){
                                     alert("The item is currently out of stock with a quantity of ' . $row['stocks'] . '.");
@@ -702,7 +702,7 @@ if (!isset($_POST['CheckOut'])) : ?>
                                 }
                                 if(document.querySelector("#input' . $b . '").value > ' . $row['stocks'] . ') {
                                     alert("Not enough stock for your order. The available quantity is ' . $row['stocks'] . ' .");
-                                    document.querySelector("#input' . $b . '").value=  ' .$row['stocks'] . ';
+                                    document.querySelector("#input' . $b . '").value=  ' . $row['stocks'] . ';
                                 }
                             }
                              document.querySelector("#input' . $b . '").oninput = () => {
@@ -767,7 +767,7 @@ if (!isset($_POST['CheckOut'])) : ?>
                 $notavail = $row['stocks'] == 0 ? "Not Available" : '';
                 $disabled = $row['stocks'] == 0 ? "disabled" : '';
                 $opacity = $row['stocks'] == 0 ? "opacity: 0.4" : '';
-                $ratesTotal    = $menuObj->totalRatingsPerProducts($row['menu_id']);
+                $ratesTotal = $menuObj->totalRatingsPerProducts($row['menu_id']);
                 $commentsTotal = $menuObj->totalCommentsPerProducts($row['menu_id']);
                 $stocks = $row["stocks"];
 
@@ -838,7 +838,7 @@ if (!isset($_POST['CheckOut'])) : ?>
                                 }
                                 if(document.querySelector("#input' . $b . '").value > ' . $row['stocks'] . ') {
                                     alert("Not enough stock for your order. The available quantity is ' . $row['stocks'] . ' .");
-                                    document.querySelector("#input' . $b . '").value=  ' .$row['stocks'] . ';
+                                    document.querySelector("#input' . $b . '").value=  ' . $row['stocks'] . ';
                                 }
                             }
                              document.querySelector("#input' . $b . '").oninput = () => {
@@ -925,7 +925,7 @@ if (!isset($_POST['CheckOut'])) : ?>
         //             });
         //         </script>
         //     ';
-
+    
         echo '
                 <script>
                     setTimeout(() => {
@@ -934,7 +934,7 @@ if (!isset($_POST['CheckOut'])) : ?>
                 </script>
             ';
 
-            
+
     }
     function getFoodCategory()
     {
@@ -955,7 +955,7 @@ if (!isset($_POST['CheckOut'])) : ?>
                 ";
         }
 
-       
+
     }
 
     function getReviewGlobal()
@@ -1123,38 +1123,39 @@ if (!isset($_POST['CheckOut'])) : ?>
     {
         global $parcelObj;
 
-        
+
         $notifications = $parcelObj->getNotifications();
         $rowCount = count($notifications);
         if ($rowCount === 0) {
             echo "";
         } else {
-           
+
             echo $rowCount;
         }
 
     }
 
-    function getNotificationContent() {
+    function getNotificationContent()
+    {
         global $parcelObj;
         $notifContent = $parcelObj->getNotificationContent();
         $rowCount = count($notifContent);
-        
+
         if ($rowCount === 0) {
             echo '<a class="dropdown-item" href="#">No notifications</a>';
         } else {
             foreach ($notifContent as $row) {
                 // Determine the background color based on the 'active' status
                 $bgColor = ($row['active'] == 2) ? 'background-color: lightgray;' : 'background-color: white;';
-                
+
                 $ckid = $row['checkout_id'];
-    
+
                 // echo '<a class="dropdown-item" href="viewParcelClient.php?userId=' . urlencode($row["reg_id"]) . '&checkoutId=' . urlencode($row["checkout_id"]) . '" style="' . $bgColor . '" onclick="alert(\'' . updateNotif($ckid) . '\'); return true;">'
                 //     . 'Your order was delivered. <strong style="color: blue;">View Order</strong></a>';
                 echo '<a class="dropdown-item" href="viewParcelClient.php?userId=' . urlencode($row["reg_id"]) . '&checkoutId=' . urlencode($row["checkout_id"]) . '&action=2" style="' . $bgColor . '" ); return true;">'
                     . 'Your order was delivered. <strong style="color: blue;">View Order</strong></a>';
 
-                    
+
             }
         }
     }
@@ -1165,13 +1166,14 @@ if (!isset($_POST['CheckOut'])) : ?>
         global $parcelObj;
         $parcelObj->updateNotif($_GET['checkoutId']);
     }
-    function updateNotif($ckid) {
+    function updateNotif($ckid)
+    {
         global $parcelObj;
         $parcelObj->updateNotif($ckid);
     }
-        
-    
-    
+
+
+
     function viewClientOrders()
     {
         global $parcelObj;
@@ -1179,7 +1181,7 @@ if (!isset($_POST['CheckOut'])) : ?>
         $reg_id = $_SESSION['reg_id'];
         $status = '';
 
-       
+
         foreach ($parcelObj->getClientOrderList($reg_id) as $row) {
 
             $orderDate = $row['order_date'];
@@ -1189,7 +1191,7 @@ if (!isset($_POST['CheckOut'])) : ?>
             $date = $date->format('F j, Y');
 
             $checkoutIdd = $row['checkout_id'];
-            
+
             if ($row['status_order'] == 0) {
                 $status = '<span class="badge bg-warning text-white">TO PAY</span>'; //0
             } else if ($row['status_order'] == 1) {
@@ -1218,12 +1220,12 @@ if (!isset($_POST['CheckOut'])) : ?>
 
     if (isset($_GET['statusVP']) && isset($_GET['ckid']) && isset($_GET['userId'])) {
         $parcelObj->updateStatus($_GET['statusVP'], $_GET['ckid']);
-    
+
         $url = 'viewParcel.php?userId=' . urlencode($_GET['userId']) . '&checkoutId=' . urlencode($_GET['ckid']);
-        
+
         url2('success', 'Success update Status.', $url);
     }
-    
+
 
     function viewParcelClients($regId, $checkoutId)
     {
@@ -1317,18 +1319,18 @@ if (!isset($_POST['CheckOut'])) : ?>
                 </tr>
             ";
 
-            $alltotal = 0;
-            $finalTotal = 0;
-            $totalquant = 0;
+        $alltotal = 0;
+        $finalTotal = 0;
+        $totalquant = 0;
 
-            foreach ($result as $row) {
-                $totalquant += $row['checkout_Qty'];
+        foreach ($result as $row) {
+            $totalquant += $row['checkout_Qty'];
 
-                $finalTotal = $row['price'] * $row['checkout_Qty'];
+            $finalTotal = $row['price'] * $row['checkout_Qty'];
 
-                $alltotal += $finalTotal;
+            $alltotal += $finalTotal;
 
-                echo "
+            echo "
                         <tr>
                             <td>$row[title]</td>
                             <td>$row[description]</td>
@@ -1338,9 +1340,9 @@ if (!isset($_POST['CheckOut'])) : ?>
                             <td>$finalTotal</td>
                         </tr>
                     ";
-            }
+        }
 
-            echo "
+        echo "
                     <tr>
                         <th>Total Quantity: </th>
                         <td colspan='5' style='color:red'><b>" . $totalquant . "</b></td>
@@ -1482,23 +1484,23 @@ if (!isset($_POST['CheckOut'])) : ?>
                            
             
             ";
-            if ($result[0]['status_order'] == 3) {
-                echo "
+        if ($result[0]['status_order'] == 3) {
+            echo "
                     <a href='#' class='btn btn-info mt-2'>
                         <i class='fas fa-print'></i> Print Receipt
                     </a>
                 ";
-            }
-            
+        }
+
     }
 
     ?>
 
-    </body>
+</body>
 
-    <!-- <tr>
+<!-- <tr>
                     <th>Total Due: </th>
                     <td colspan='4' style='color:red'><b>&#8369; " . ($totalprice * $totalquant) . "</b></td>
                 </tr> -->
 
-    </html>
+</html>

@@ -8,10 +8,10 @@
     <?php include('header.php'); ?>
     <title>Customer Login | Page</title>
     <style>
-        body {
-            background-image: url('https://www.visitcornwall.com/sites/default/files/product_image/the_cove_resturant_.jpg');
-            background-attachment: fixed;
-        }
+    body {
+        background-image: url('https://www.visitcornwall.com/sites/default/files/product_image/the_cove_resturant_.jpg');
+        background-attachment: fixed;
+    }
     </style>
 </head>
 
@@ -41,14 +41,15 @@
                                 <div id="password-error" style="color: red;"></div>
                             </div>
                             <div class="form-group">
+
+                                <input type="checkbox" onclick="viewPass()" />  
                                 <label>Show Password</label>
-                                <input type="checkbox" onclick="viewPass()" />
                             </div>
                         </div>
                     </div>
 
                     <center>
-                        <input type="hidden" name="CustomerLogin" value="CustomerLogin" >
+                        <input type="hidden" name="CustomerLogin" value="CustomerLogin">
                         <button class="btn btn-success" id="submit-btn" disabled>LOGIN</button>
                     </center>
                 </form>
@@ -72,8 +73,8 @@
             }
         }
 
-        $(document).ready(function() {
-            $('#password').keyup(function() {
+        $(document).ready(function () {
+            $('#password').keyup(function () {
                 var password = $(this).val();
                 if (password.length < 8) {
                     $('#password-error').text('Password must be at least 8 characters long');

@@ -34,7 +34,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label>Middle Name</label>
-                                <input type="text"  name="m_name" class="form-control">
+                                <input type="text" name="m_name" class="form-control">
                             </div>
                         </div>
                         <div class="col">
@@ -44,19 +44,12 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="text" required name="email" class="form-control">
-                            </div>
-                        </div>
-                    </div> -->
+
 
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label>usrername</label>
+                                <label>Username</label>
                                 <input type="text" required name="username" class="form-control">
                             </div>
                         </div>
@@ -71,7 +64,8 @@
                         <div class="col">
                             <div class="form-group">
                                 <label>Confirm Password</label>
-                                <input type="password" required name="confirm_password" class="form-control" id="confirm_password">
+                                <input type="password" required name="confirm_password" class="form-control"
+                                    id="confirm_password">
                                 <div id="password-error2" style="color: red;"></div>
                             </div>
                         </div>
@@ -90,11 +84,11 @@
         </div>
     </div>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             function validatePasswords() {
                 var password = $('#password').val();
                 var confirmPassword = $('#confirm_password').val();
-                
+
                 var passwordValid = password.length >= 8;
                 var passwordsMatch = password === confirmPassword;
 
@@ -122,7 +116,7 @@
 
             // Attach the validation function to input events
             $('#password, #confirm_password').on('input', validatePasswords);
-    
+
         });
     </script>
     <?php include('footer.php'); ?>
