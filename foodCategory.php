@@ -10,6 +10,7 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,19 +18,22 @@
     <?php include('header.php');?>
     <title>Food Category | Page</title>
 </head>
+
 <body>
     <div class="wrapper">
         <div id="content">
             <?php include('sidebar.php');?>
 
             <div class="card">
-                <div class="card-header">  
+                <div class="card-header">
                     <div class="row">
                         <div class="col">
-                        <h4 class="mt-2">Food Category</h4>
+                            <h4 class="mt-2">Food Category</h4>
                         </div>
                         <div class="col">
-                            <button style="float: right;" class="btn btn-primary" data-toggle="modal" data-target="#addCategory" onclick="prepareAdd()"> <i class="fas fa-plus"></i> New Category</button>
+                            <button style="float: right;" class="btn btn-primary" data-toggle="modal"
+                                data-target="#addCategory" onclick="prepareAdd()"> <i class="fas fa-plus"></i> New
+                                Category</button>
                         </div>
                     </div>
                 </div>
@@ -54,10 +58,10 @@
             <div class="line"></div>
         </div>
     </div>
-    
+
     <script>
-        const removeFoodCategory = (id) => {
-            Swal.fire({
+    const removeFoodCategory = (id) => {
+        Swal.fire({
             title: 'Are you sure?',
             text: "Do you want to remove!",
             icon: 'warning',
@@ -65,12 +69,12 @@
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Remove'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location = 'route.php?removeFoodCategory='+id;
-                }
-            })
-        }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location = 'route.php?removeFoodCategory=' + id;
+            }
+        })
+    }
     </script>
 
     <script>
@@ -96,4 +100,5 @@
 
     <?php include('Modal/addCategory_modal.php'); include('footer.php');?>
 </body>
+
 </html>

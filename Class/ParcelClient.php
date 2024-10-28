@@ -45,9 +45,9 @@
             }
         }
 
-        public function getNotifications() {
+        public function getNotifications($customerID) {
             try {
-                $stmt = $this->connect()->prepare("SELECT * FROM `tbl_checkout` WHERE active = '2' order by delivered_date desc ");
+                $stmt = $this->connect()->prepare("SELECT * FROM `tbl_checkout` WHERE active = '2' AND  reg_id='$customerID' order by delivered_date desc ");
                 $stmt->execute();
 
                 $arr = array();
@@ -65,9 +65,9 @@
             }
         }
 
-        public function getNotificationContent() {
+        public function getNotificationContent($customerID) {
             try {
-                $stmt = $this->connect()->prepare("SELECT * FROM `tbl_checkout` WHERE active IN ('2', '3') ORDER BY delivered_date DESC; ");
+                $stmt = $this->connect()->prepare("SELECT * FROM `tbl_checkout` WHERE active IN ('2', '3') AND reg_id='$customerID' ORDER BY delivered_date DESC; ");
                 $stmt->execute();
 
                 $arr = array();

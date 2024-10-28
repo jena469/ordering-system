@@ -9,43 +9,42 @@
     <?php include('header.php'); ?>
     <title>Home | Page</title>
     <style>
-        .col-md-6.card {
-            max-width: 352px;
-            margin-bottom: 23px;
-        }
+    .col-md-6.card {
+        max-width: 352px;
+        margin-bottom: 23px;
+    }
 
-        .row {
-            justify-content: space-around;
-        }
+    .row {
+        justify-content: space-around;
+    }
 
-        .overflo-box {
-            overflow-y: auto;
-            max-height: 86vh;
-        }
+		.overflo-box {
+			overflow-x: hidden;
+			max-height: 86vh;
+		}
 
-        .card.box-h {
-            height: 100vh;
-        }
+    .card.box-h {
+        height: 100vh;
+    }
 
-        .card-body.box-h {
-            height: 708px;
-        }
+    .card-body.box-h {
+        height: 708px;
+    }
 
-        img.rounded {
-            height: 233px !important;
-        }
-        
+    img.rounded {
+        height: 233px !important;
+    }
     </style>
 </head>
 
-<body >
+<body>
     <?php include('navbar.php'); ?>
-    <div class="container mb-5" >
+    <div class="container mb-5">
         <div class="card shadow">
-            <div class="card-body">
+            <div class="card-body ">
                 <center>
                     <h1>Order Now</h1>
-                    
+
                 </center>
                 <div class="row">
                     <div class="col-sm-3" style="padding: 2%;">
@@ -65,100 +64,109 @@
                         <div class="card">
                             <div class="card-header">
                                 <p>Product List</p>
-                                
+
                             </div>
-                            <div class="px-2" >
-                                <input class="form-control mr-sm-2 my-2" type="search" placeholder="Search" aria-label="Search"
-                                id="filesearch">
+                            <div class="px-2">
+                                <input class="form-control mr-sm-2 my-2" type="search" placeholder="Search"
+                                    aria-label="Search" id="filesearch">
                             </div>
                             <div class="card-body box-h">
                                 <div class="row overflo-box">
                                     <?php
 
-                                    if (empty($_GET['catId'])) {
-                                        showAllMenu();
-                                    } else {
-                                        showFoodMenu(isset($_GET['catId']) ? $_GET['catId'] : '<center>Empty menu list...</center>');
-                                    }
+									if (empty($_GET['catId'])) {
+										showAllMenu();
+									} else {
+										showFoodMenu(isset($_GET['catId']) ? $_GET['catId'] : '<center>Empty menu list...</center>');
+									}
 
-                                    ?>
+									?>
                                 </div>
+
                             </div>
+
                         </div>
+                        <div id="pagination" class="mt-1 d-flex justify-content-center "></div>
+
+
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
+
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // $("#filesearch").keyup(function () {
-            //     var searchTerm = $(this).val().toLowerCase();
+    document.addEventListener('DOMContentLoaded', function() {
+        // $("#filesearch").keyup(function () {
+        //     var searchTerm = $(this).val().toLowerCase();
 
-            //     $('.card').each(function() {
-            //         var cardText = $(this).text().toLowerCase();
+        //     $('.card').each(function() {
+        //         var cardText = $(this).text().toLowerCase();
 
-            //         if (cardText.indexOf(searchTerm) > -1) {
-            //             $(this).show();
-            //         } else {
-            //             $(this).hide();
-            //         }
-            //     });
-            // });
-            var inputs = document.querySelectorAll('.nonNegativeInput');
-            inputs.forEach(function(input) {
-                input.addEventListener('input', function() {
-                    if (this.value < 0) {
-                        this.value = '';
-                    }
-                });
+        //         if (cardText.indexOf(searchTerm) > -1) {
+        //             $(this).show();
+        //         } else {
+        //             $(this).hide();
+        //         }
+        //     });
+        // });
+        var inputs = document.querySelectorAll('.nonNegativeInput');
+        inputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = '';
+                }
             });
         });
-        
-        $('.see-all-reviews').on('click', function() {
-            let dataID = $(this).data('id');
-            $('#reviewsModal').modal('show')
-            $('#product_id').val(dataID);
+    });
 
-            const showlist = async (menuid) => {
+    $('.see-all-reviews').on('click', function() {
+        let dataID = $(this).data('id');
+        $('#reviewsModal').modal('show')
+        $('#product_id').val(dataID);
 
-                let response = await fetch(`route.php?list_reviews=list_reviews&menu_id=${menuid}`, {
-                    credentials: "same-origin",
-                    method: 'GET'
-                });
+        const showlist = async (menuid) => {
 
-                let {
-                    message,
-                    status
-                } = await response.json();
+            let response = await fetch(`route.php?list_reviews=list_reviews&menu_id=${menuid}`, {
+                credentials: "same-origin",
+                method: 'GET'
+            });
 
-                if (status == 'success') {
-                    let list = '';
-                    message.forEach(el => {
-                        list += `
-                            <li>
-                                <span>${el.fname} ${el.lname}</span>
-                                <p>
-                                    ${el.message}
-                                </p>
-                            </li>
-                        `;
-                    })
+            let {
+                message,
+                status
+            } = await response.json();
 
-                    document.querySelector('#list_reviews').innerHTML = list!='' ? list : '<li>No reviews.</i>';
-                } else {
-                    console.log(message);
-                }
+            if (status == 'success') {
+                let list = '';
+                message.forEach(el => {
+                    list += `
+							<li>
+								<span>${el.fname} ${el.lname}</span>
+								<p>
+									${el.message}
+								</p>
+							</li>
+						`;
+                })
+
+                document.querySelector('#list_reviews').innerHTML = list != '' ? list :
+                    '<li>No reviews.</i>';
+            } else {
+                console.log(message);
             }
+        }
 
-            showlist(dataID);
+        showlist(dataID);
 
 
-            
-        });
+
+    });
     </script>
     <?php include('Modal/reviews_Modal.php');
-    include('footer.php'); ?>
+	include('footer.php'); ?>
 </body>
 
 </html>

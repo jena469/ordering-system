@@ -63,80 +63,80 @@ class FoodMenu extends Db
                 $result = $stmt->execute([
                     "cat_id" => $data['cat_id'],
                     "title" => $data['title'],
-                    "description"  => $data['desc'],
+                    "description" => $data['desc'],
                     "price" => $data['price'],
                     "stocks" => $data['stocks'],
-                    "pic"   => $img,
-                    "status"   => $status,
+                    "pic" => $img,
+                    "status" => $status,
                 ]);
             }
 
             return array(
                 'message' => $result,
-                'status'  => 'success',
+                'status' => 'success',
             );
         } catch (Exception $e) {
             return array(
                 'message' => 'Error: ' . $e->getMessage(),
-                'status'  => 'error',
+                'status' => 'error',
             );
         }
     }
     public function updateProof($data, $files)
-{
-    include('Upload.php');
-    try {
-        $db = $this->connect();
-        $stmt = $db->prepare("SELECT reg_id FROM tbl_checkout WHERE checkout_id = :checkout_id");
-        $stmt->bindParam(':checkout_id', $data['checkout_id']);
-        $stmt->execute();
-        $userId = $stmt->fetchColumn();
-        // Ensure $checkout_id is defined
-        if (isset($data['checkout_id'])) {
-            $checkout_id = $data['checkout_id'];
-        } else {
-            throw new Exception("Checkout ID is missing.");
-        }
-        // Attempt to upload the file
-        if ($img = upload($files['file'])) {
-            // Prepare the SQL statement
-            $status_order = 3;
-            $currentDate = date('Y-m-d H:i:s');
-            $active = 2;
+    {
+        include('Upload.php');
+        try {
+            $db = $this->connect();
+            $stmt = $db->prepare("SELECT reg_id FROM tbl_checkout WHERE checkout_id = :checkout_id");
+            $stmt->bindParam(':checkout_id', $data['checkout_id']);
+            $stmt->execute();
+            $userId = $stmt->fetchColumn();
+            // Ensure $checkout_id is defined
+            if (isset($data['checkout_id'])) {
+                $checkout_id = $data['checkout_id'];
+            } else {
+                throw new Exception("Checkout ID is missing.");
+            }
+            // Attempt to upload the file
+            if ($img = upload($files['file'])) {
+                // Prepare the SQL statement
+                $status_order = 3;
+                $currentDate = date('Y-m-d H:i:s');
+                $active = 2;
 
-            $stmt = $db->prepare("UPDATE tbl_checkout SET 
+                $stmt = $db->prepare("UPDATE tbl_checkout SET 
                         proof_of_delivery = :proof_of_delivery, status_order = :status_order , delivered_date = :delivered_date , active = :active
                         WHERE checkout_id = :checkout_id");
 
-            $stmt->bindParam(':proof_of_delivery', $img);
-            $stmt->bindParam(':active', $active);  
-            $stmt->bindParam(':delivered_date', $currentDate);  
-            $stmt->bindParam(':status_order', $status_order);  
-            $stmt->bindParam(':checkout_id', $checkout_id);
+                $stmt->bindParam(':proof_of_delivery', $img);
+                $stmt->bindParam(':active', $active);
+                $stmt->bindParam(':delivered_date', $currentDate);
+                $stmt->bindParam(':status_order', $status_order);
+                $stmt->bindParam(':checkout_id', $checkout_id);
 
 
-            // Execute the statement
-            if ($stmt->execute()) {
-                // Check if any rows were affected
-                if ($stmt->rowCount() > 0) {
-                    header("Location: viewParcel.php?userId={$userId}&statusVP=3&ckid={$checkout_id}");
-                exit();
+                // Execute the statement
+                if ($stmt->execute()) {
+                    // Check if any rows were affected
+                    if ($stmt->rowCount() > 0) {
+                        header("Location: viewParcel.php?userId={$userId}&statusVP=3&ckid={$checkout_id}");
+                        exit();
+                    } else {
+                        throw new Exception("No rows were updated. Check if the checkout ID is valid.");
+                    }
                 } else {
-                    throw new Exception("No rows were updated. Check if the checkout ID is valid.");
+                    throw new Exception("Failed to execute the update statement.");
                 }
             } else {
-                throw new Exception("Failed to execute the update statement.");
+                throw new Exception("File upload failed.");
             }
-        } else {
-            throw new Exception("File upload failed.");
+        } catch (Exception $e) {
+            return array(
+                'message' => 'Error: ' . $e->getMessage(),
+                'status' => 'error',
+            );
         }
-    } catch (Exception $e) {
-        return array(
-            'message' => 'Error: ' . $e->getMessage(),
-            'status'  => 'error',
-        );
     }
-}
 
     public function updateFoodMenu($data, $files)
     {
@@ -183,12 +183,12 @@ class FoodMenu extends Db
 
             return array(
                 'message' => $result ? 'Update successful' : 'Update failed',
-                'status'  => $result ? 'success' : 'error',
+                'status' => $result ? 'success' : 'error',
             );
         } catch (Exception $e) {
             return array(
                 'message' => 'Error: ' . $e->getMessage(),
-                'status'  => 'error',
+                'status' => 'error',
             );
         }
     }
@@ -205,18 +205,18 @@ class FoodMenu extends Db
             $stmt->bindParam(':status', $status);
 
             $result = $stmt->execute([
-                "status"  => $status,
+                "status" => $status,
                 "menu_id" => $Id
             ]);
 
             return array(
                 'message' => $result,
-                'status'  => 'success',
+                'status' => 'success',
             );
         } catch (Exception $e) {
             return array(
                 'message' => 'Error: ' . $e->getMessage(),
-                'status'  => 'error',
+                'status' => 'error',
             );
         }
     }
@@ -288,16 +288,30 @@ class FoodMenu extends Db
             $stmt->execute([
                 'menu_id' => $menu_id
             ]);
-
-            $total = 0;
+            $totalQuality = 0;
+            $totalService = 0;
+            $totalSpeed = 0;
+            $a = 0;
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $total += $row['product_quality'];
-                $total += $row['seller_service'];
-                $total += $row['delivery_speed'];
+                $a++;
+                $totalQuality += $row['product_quality'];
+                $totalService += $row['seller_service'];
+                $totalSpeed += $row['delivery_speed'];
             }
 
-            return $total;
+            if ($a > 0) {
+                $avgQuality = $totalQuality / $a;
+                $avgService = $totalService / $a;
+                $avgSpeed = $totalSpeed / $a;
+
+                $total = ($avgQuality + $avgService + $avgSpeed) / 3;
+
+                return round($total, 2);
+            } else {
+                return 0;
+            }
+
         } catch (Exception $e) {
             echo $e->getMessage();
         }
