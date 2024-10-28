@@ -1,34 +1,3 @@
-<!-- global-scripts.php -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-<!-- na oooveride ni bootstrap yung sa toastr kaya nilagay kong ganyan -->
-<style>
-.toast-success {
-	background-color: #28a745 !important;
-	color: #ffffff !important;
-}
-
-.toast-error {
-	background-color: #dc3545 !important;
-	color: #ffffff !important;
-}
-
-.toast-info {
-	background-color: #17a2b8 !important;
-	color: #ffffff !important;
-}
-
-.toast-warning {
-	background-color: #ffc107 !important;
-	color: #333333 !important;
-}
-
-.toast {
-	padding: 10px 20px;
-}
-</style>
 <?php
 require('./Class/Db.php');
 require('./Class/Rates.php');
@@ -54,11 +23,11 @@ if (!isset($_POST['CheckOut'])): ?>
 <html lang="en">
 
 <head>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
-    <?php endif; ?>
+	<?php endif; ?>
 
 	<?php
     session_start();
@@ -162,7 +131,7 @@ if (!isset($_POST['CheckOut'])): ?>
         if ($response['status'] == 'success') {
             $response;
             $_SESSION['reg_id'] = $response['message']['reg_id'];
-            $_SESSION['customerID']=$response['message']['reg_id'];
+            $_SESSION['customerID'] = $response['message']['reg_id'];
             $_SESSION['customerName'] = $response['message']['fname'] . ' ' . $response['message']['m_name'] . ' ' . $response['message']['lname'];
             $_SESSION['user'] = 'user';
 
@@ -507,7 +476,7 @@ if (!isset($_POST['CheckOut'])): ?>
             $_POST,
             $_FILES
         );
-
+        header('Content-Type: application/json');
         if ($response['status'] == 'success') {
 
             unset($_SESSION['getReciept']);
@@ -515,11 +484,11 @@ if (!isset($_POST['CheckOut'])): ?>
             $_SESSION['getReciept'] = $_SESSION['addedOrder'];
 
             unset($_SESSION['addedOrder']);
-
             echo json_encode([
                 'message' => 'Order placed Successfully.',
                 'status' => 'success'
             ]);
+
         } elseif ($response['status'] == 'warning') {
             echo json_encode([
                 'message' => 'Empty Cart Please Try Agin!',
@@ -649,10 +618,10 @@ if (!isset($_POST['CheckOut'])): ?>
     }
 
     function showAllMenu()
-    {   
+    {
         global $menuObj;
         $itemsPerPage = 10;
-        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $currentPage = isset($_GET['page']) ? (int) $_GET['page'] : 1;
         $offset = ($currentPage - 1) * $itemsPerPage;
         $collections = $menuObj->getShowAllMenu();
         $menuItems = array_slice($menuObj->getShowAllMenu(), $offset, $itemsPerPage);
@@ -741,6 +710,36 @@ if (!isset($_POST['CheckOut'])): ?>
                             </p>
                 </div>
 
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
+                <style>
+                .toast-success {
+                    background-color: #28a745 !important;
+                    color: #ffffff !important;
+                }
+
+                .toast-error {
+                    background-color: #dc3545 !important;
+                    color: #ffffff !important;
+                }
+
+                .toast-info {
+                    background-color: #17a2b8 !important;
+                    color: #ffffff !important;
+                }
+
+                .toast-warning {
+                    background-color: #ffc107 !important;
+                    color: #333333 !important;
+                }
+
+                .toast {
+                    padding: 10px 20px;
+                } 
+                </style>
     
                 <script>
 
@@ -811,12 +810,12 @@ if (!isset($_POST['CheckOut'])): ?>
     {
         global $menuObj;
 
-      
+
         $itemsPerPage = 5;
-        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $currentPage = isset($_GET['page']) ? (int) $_GET['page'] : 1;
         $offset = ($currentPage - 1) * $itemsPerPage;
-        $collections =$menuObj->getShowMenu($categoryId);
-        $menuItems = array_slice( $collections, $offset, $itemsPerPage);
+        $collections = $menuObj->getShowMenu($categoryId);
+        $menuItems = array_slice($collections, $offset, $itemsPerPage);
         $buttonMinusIndex = 0;
         $inputIndex = 0;
         $buttonPlusIndex = 0;
@@ -845,7 +844,7 @@ if (!isset($_POST['CheckOut'])): ?>
 
 
         $menuCount = isset($menuObj->getShowMenu($categoryId)[0]) ? $menuObj->getShowMenu($categoryId)[0] : 0;
-     
+
         if ($menuCount == 0) {
             echo "<p>Loading...</p>";
         } else {
@@ -905,7 +904,36 @@ if (!isset($_POST['CheckOut'])): ?>
                             <span class="text-danger">' . $totalRatings . '</span> (' . $totalComments . ' Reviews)
                         </p>
                     </div>
+             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
+                <style>
+                .toast-success {
+                    background-color: #28a745 !important;
+                    color: #ffffff !important;
+                }
+
+                .toast-error {
+                    background-color: #dc3545 !important;
+                    color: #ffffff !important;
+                }
+
+                .toast-info {
+                    background-color: #17a2b8 !important;
+                    color: #ffffff !important;
+                }
+
+                .toast-warning {
+                    background-color: #ffc107 !important;
+                    color: #333333 !important;
+                }
+
+                .toast {
+                    padding: 10px 20px;
+                } 
+                </style>
                     <script>
                         let quantity' . $quantityIndex . ' = ' . (($stockQuantity < 1) ? 0 : 1) . '; // Set initial quantity
                         
@@ -1219,10 +1247,10 @@ if (!isset($_POST['CheckOut'])): ?>
     {
         global $parcelObj;
 
-        $customerID=$_SESSION['customerID'];
-         
-        
-        $notifications = $parcelObj->getNotifications($customerID); 
+        $customerID = $_SESSION['customerID'];
+
+
+        $notifications = $parcelObj->getNotifications($customerID);
         $rowCount = count($notifications);
         if ($rowCount === 0) {
             echo "";
@@ -1235,7 +1263,7 @@ if (!isset($_POST['CheckOut'])): ?>
     function getNotificationContent()
     {
         global $parcelObj;
-        $customerID=$_SESSION['customerID'];
+        $customerID = $_SESSION['customerID'];
 
         $notifContent = $parcelObj->getNotificationContent($customerID);
         $rowCount = count($notifContent);

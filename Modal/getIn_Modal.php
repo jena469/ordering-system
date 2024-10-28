@@ -8,7 +8,7 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<form id="placeorder" method="post" enctype="multipart/form-data">
+				<form onsubmit="placeorder(event)" method="post" enctype="multipart/form-data">
 					<div class="row">
 						<div class="col">
 							<div id="gcashQr" class="form-group">
@@ -65,12 +65,11 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-placeorder.onsubmit = async (e) => {
-	e.preventDefault();
+const placeorder = async (event) => {
+	event.preventDefault();
 
-	// SweetAlert2 confirmation dialog
 	const {
-		value: willProceed
+		value: willProceed = false
 	} = await Swal.fire({
 		title: 'Confirm to complete orders?',
 		icon: 'warning',
@@ -82,35 +81,57 @@ placeorder.onsubmit = async (e) => {
 	});
 
 	if (willProceed) {
-		let response = await fetch('route.php', {
-			credentials: "same-origin",
-			method: 'POST',
-			body: new FormData(placeorder)
-		});
+		try {
+			console.log('Processing order...');
 
-		let {
-			message,
-			status
-		} = await response.json();
+			let response = await fetch('route.php', {
+				credentials: "same-origin",
+				method: 'POST',
 
-		if (status === 'success') {
-			Swal.fire({
-				title: 'Success!',
-				text: message,
-				icon: 'success',
-				timer: 1500,
-				showConfirmButton: false
+				body: new FormData(event.target)
 			});
-			setTimeout(() => {
-				window.location = "reciept.php";
-			}, 1500);
-		} else {
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			const data = await response.json()
+
+
+
+
+			let {
+				message,
+				status
+			} = data;
+			console.log('Status:', status);
+
+
+
+			if (status === 'success') {
+				Swal.fire({
+					title: 'Success!',
+					text: message,
+					icon: 'success',
+					timer: 1500,
+					showConfirmButton: false
+				});
+				setTimeout(() => {
+					window.location = "reciept.php";
+				}, 1500);
+			} else {
+				Swal.fire({
+					title: 'Error!',
+					text: message,
+					icon: 'error'
+				});
+				console.log('Error message:', message);
+			}
+		} catch (error) {
+			console.error('Parse error:', error);
 			Swal.fire({
 				title: 'Error!',
-				text: message,
+				text: 'Something went wrong. Please try again later.',
 				icon: 'error'
 			});
-			console.log(message);
 		}
 	}
 };
