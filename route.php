@@ -19,17 +19,17 @@ if (isset($_GET['list_reviews']) && isset($_GET['menu_id'])) {
 
 if (!isset($_POST['CheckOut'])): ?>
 
-<!DOCTYPE html>
-<html lang="en">
+    <!DOCTYPE html>
+    <html lang="en">
 
-<head>
-	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
+    <head>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
 
-<body>
-	<?php endif; ?>
+    <body>
+    <?php endif; ?>
 
-	<?php
+    <?php
     session_start();
     require('./Class/TilesCounter.php');
     require('./Class/ParcelClient.php');
@@ -1429,12 +1429,15 @@ if (!isset($_POST['CheckOut'])): ?>
                     </tr>
                     <th>Payment Method: </th>
                         <td>" . $result[0]['payment_method'] . "</td>
-                    </tr>  
+                    </tr> ";
+        if ($result[0]['payment_method'] !== 'Cash On Delivery') {
+            echo " 
                     <th>Proof of Payment: </th>
                         <td><a class='btn btn-primary' target='_blank' href='" . $result[0]['proof_gcpayment'] . "'>View</a></td>
                     </tr>  
-                    <tr>
-                </table>
+                    <tr>";
+        }
+        echo "</table>
 
                 <table class='table table-bordered'>
                 <tr>
