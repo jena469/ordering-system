@@ -42,11 +42,12 @@
 								</div>
 								<div class="form-group">
 									<label>Phone Number:</label>
-									<input type="number" required name="phonenum" class="form-control">
+									<input type="string" required name="phonenum" id="phone" class="form-control">
+									<span class="text-danger" id="phoneMessage"></span>
 								</div>
 								<div class="form-group">
 									<label>Address:</label>
-									<textarea name="address" cols="20" rows="3" class="form-control"></textarea>
+									<textarea name="address" required cols="20" rows="3" class="form-control"></textarea>
 									<input type="hidden" name="paymenttype" id="paymenttype">
 								</div>
 							</div>
@@ -67,6 +68,13 @@
 <script>
 const placeorder = async (event) => {
 	event.preventDefault();
+
+	const phone=document.getElementById("phone").value,
+	phoneMessage=document.getElementById("phoneMessage")
+
+	if(phone.length<11){
+		return phoneMessage.innerHTML='Please provide a valid phone number'
+	}
 
 	const {
 		value: willProceed = false
