@@ -19,14 +19,14 @@ if (isset($_GET['list_reviews']) && isset($_GET['menu_id'])) {
 
 if (!isset($_POST['CheckOut'])): ?>
 
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>
+<head>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
 
-    <body>
+<body>
     <?php endif; ?>
 
     <?php
@@ -52,6 +52,16 @@ if (!isset($_POST['CheckOut'])): ?>
 
     $totalpriceCart = 0;
 
+    $data = json_decode(file_get_contents('php://input')); 
+    
+    if(isset($data->checkoutID)){
+        $checkoutID = $data->checkoutID;  
+        $isApproved=$data->isApproved;
+        $reason=$data->reason;
+        $cartObj->handleApproval($isApproved,$checkoutID,$reason);
+    }
+
+    
 
 
     if (isset($_POST['action_post_reviews'])) {
@@ -515,7 +525,7 @@ if (!isset($_POST['CheckOut'])): ?>
     if (isset($_GET['minusQtySesssion'])) {
         $index = $_GET['minusQtySesssion'];
 
-        if ($_SESSION['addedOrder'][$index]['qty'] != 0)
+        if ($_SESSION['addedOrder'][$index]['qty'] != 1)
 
             $_SESSION['addedOrder'][$index]['qty'] -= 1;
 
@@ -574,9 +584,9 @@ if (!isset($_POST['CheckOut'])): ?>
                         <td style='width:30%;'>
                             <div class='row' style='padding:5%;'>
                                 <div class='col-md-3'>
-                                    <center>
-                                        <a href='route.php?plusQtySesssion=" . $SessionIndex . "' class='btn btn-primary'>
-                                            +
+                                   <center>
+                                        <a href=' route.php?minusQtySesssion=" . $SessionIndex . "' class='btn btn-danger'>
+                                        -
                                         </a>
                                     </center>
                                 </div>
@@ -584,11 +594,13 @@ if (!isset($_POST['CheckOut'])): ?>
                                     <input read-only style='text-align:center;' type='number' class='form-control' value='" . $qty . "'/>
                                 </div>
                                 <div class='col-md-3'>
+
                                     <center>
-                                        <a href=' route.php?minusQtySesssion=" . $SessionIndex . "' class='btn btn-danger'>
-                                        -
+                                        <a href='route.php?plusQtySesssion=" . $SessionIndex . "' class='btn btn-primary'>
+                                            +
                                         </a>
                                     </center>
+                                 
                                 </div>
                             </div>
                         </td>
@@ -1157,29 +1169,34 @@ if (!isset($_POST['CheckOut'])): ?>
         }
     }
 
-    function getFoodMenu()
-    {
+    function getFoodMenu() {
         global $menuObj;
-
-        foreach ($menuObj->getFoodMenu() as $row) {
+        $products = $menuObj->getFoodMenu();
+        
+    
+        foreach ($products as $row) {
+        
+            
             echo "
-                    <tr>
-                        <td>$row[menu_id]</td>
-                        <td><center><img src='$row[pic]' width='40' height='40' style='border-radius: 50%;' /></center> </td>
-                        <td>$row[cat_title]</td>
-                        <td>$row[title]</td>
-                        <td>$row[description]</td>
-                        <td>$row[price]</td>
-                        <td>$row[stocks]</td>
-                        <td>
-                            <center>
-                                <button onclick=removeFoodMenu(" . $row['menu_id'] . ") class='btn btn-danger btn-sm'> <span class='fas fa-trash'></span></button>
-                                <button onclick='prepareUpdateProd({$row['menu_id']},\"{$row['pic']}\", \"{$row['cat_id']}\", \"{$row['title']}\", \"{$row['description']}\", \"{$row['price']}\", \"{$row['stocks']}\") ' class='btn btn-warning btn-sm'> <span class='far fa-edit'></span></button>
-                            </center>
-                        </td>
-                    </tr>
-                ";
+                <tr>
+                    <td>$row[menu_id]</td>
+                    <td><center><img src='$row[pic]' width='40' height='40' style='border-radius: 50%;' /></center></td>
+                    <td>$row[cat_title]</td>
+                    <td>$row[title]</td>
+                    <td>$row[description]</td>
+                    <td>$row[price]</td>
+                    <td>$row[stocks]</td>
+                    <td>
+                        <center>
+                            <button onclick=removeFoodMenu(" . $row['menu_id'] . ") class='btn btn-danger btn-sm'> <span class='fas fa-trash'></span></button>
+                            <button onclick='prepareUpdateProd({$row['menu_id']},\"{$row['pic']}\", \"{$row['cat_id']}\", \"{$row['title']}\", \"{$row['description']}\", \"{$row['price']}\", \"{$row['stocks']}\") ' class='btn btn-warning btn-sm'> <span class='far fa-edit'></span></button>
+                        </center>
+                    </td>
+                </tr>
+            ";
         }
+    
+       
     }
 
     function totalParcel()
@@ -1272,7 +1289,24 @@ if (!isset($_POST['CheckOut'])): ?>
             echo '<a class="dropdown-item" href="#">No notifications</a>';
         } else {
             foreach ($notifContent as $row) {
-                // Determine the background color based on the 'active' status
+                $statusOrder= $row['status_order'];
+                $message='You order was delivered ';
+                switch ($statusOrder) {
+                    case -2:
+                            $message = 'You order was rejected&nbsp;&nbsp;&nbsp;';
+                            break;
+
+                    case 1:
+                            $message='You order was to shipped';
+                            break;
+                    case 0:
+                            $message='You order was  approved';
+                            break;
+                    
+                    default:
+                           $message='You order was delivered ';
+                           break;
+                }
                 $bgColor = ($row['active'] == 2) ? 'background-color: lightgray;' : 'background-color: white;';
 
                 $ckid = $row['checkout_id'];
@@ -1280,7 +1314,7 @@ if (!isset($_POST['CheckOut'])): ?>
                 // echo '<a class="dropdown-item" href="viewParcelClient.php?userId=' . urlencode($row["reg_id"]) . '&checkoutId=' . urlencode($row["checkout_id"]) . '" style="' . $bgColor . '" onclick="alert(\'' . updateNotif($ckid) . '\'); return true;">'
                 //     . 'Your order was delivered. <strong style="color: blue;">View Order</strong></a>';
                 echo '<a class="dropdown-item" href="viewParcelClient.php?userId=' . urlencode($row["reg_id"]) . '&checkoutId=' . urlencode($row["checkout_id"]) . '&action=2" style="' . $bgColor . '" ); return true;">'
-                    . 'Your order  delivered. <strong style="color: blue;">View Order</strong></a>';
+                    . $message . '<strong style="color: blue; margin-left:15px">View Order</strong></a>';
 
 
             }
@@ -1326,7 +1360,11 @@ if (!isset($_POST['CheckOut'])): ?>
                 $status = '<span class="badge bg-warning text-white">TO PAY</span>'; //0
             } else if ($row['status_order'] == 1) {
                 $status = '<span class="badge bg-secondary text-white">CASH ON DELIVERY</span>'; //2
-            } else if ($row['status_order'] == 2) {
+            } else if ($row['status_order'] == -2) {
+                $status = '<span class="badge bg-danger text-white">REJECTED</span>'; //2
+            }  
+            
+            else if ($row['status_order'] == 2) {
                 $status = '<span class="badge bg-primary text-white">SHIPPED</span>'; //2
             } else {
                 $status = '<span class="badge bg-success text-white">RECIEVED</span>'; //3
@@ -1361,120 +1399,170 @@ if (!isset($_POST['CheckOut'])): ?>
     function viewParcelClients($regId, $checkoutId)
     {
         global $parcelObj;
-        $totalprice = 0;
         $totalquant = 0;
         $result = $parcelObj->viewParcelClients($regId, $checkoutId);
-        $orderDate = $result[0]['order_date'];
+        $orderDate =  "";
+        $fname="";
+        $lname="";
+        $payment_method="Cash On Delivery";
+        $checkoutQty=0;
+        $price=0;
+        $title="";
+        $description="";
+        $catTitle="";
+        $proof="";
+        $checkoutId=0;
+        $statusOrder=-1;
 
+        if (empty(array_diff_key(array_flip([
+              'order_date','title','description','price','cat_title','payment_method',
+             'status_order', 'checkout_id', 'fname', 'lname', 'proof_gcpayment', 'checkout_Qty']), $result))) {
+           $orderDate=$result['order_date'];
+           $fname=$result['fname'];
+           $lname=$result['lname'];
+           $payment_method=$result['payment_method'];
+           $checkoutQty=$result['checkout_Qty'];
+           $price=$result['price'];
+           $title=$result['title'];
+           $description=$result['description'];
+           $catTitle=$result['cat_title'];
+           $proof=$result['proof_gcpayment'];
+           $checkoutId=$result['checkout_id'];
+           $statusOrder=$result['status_order'];
+
+        }
+        
         $date = new DateTime($orderDate);
 
         $date = $date->format('F j, Y');
 
-        if ($result[0]['order_date'] == 0) {
-            $selected = 'selected';
-        } else if ($result[0]['order_date'] == 1) {
-        } else if ($result[0]['order_date'] == 2) {
-            $selected = 'selected';
-        } else {
-            $selected = 'selected';
-        }
-
         $typ_btn0 = 'light';
+        $pending = 'light';
         $typ_btn1 = 'light';
         $typ_btn2 = 'light';
         $typ_btn3 = 'light';
+        $isDisabled=false;
 
-        if (isset($result[0]['status_order']) && $result[0]['status_order'] == 0) {
+
+        if ($statusOrder == -1) {
+            $pending = 'warning';
+            $isDisabled=true;
+
+        } else if ($statusOrder == 0) {
             $typ_btn0 = 'warning';
-        } else if (isset($result[0]['status_order']) && $result[0]['status_order'] == 1) {
+        } else if ($statusOrder == 1) {
             $typ_btn1 = 'secondary';
-        } else if (isset($result[0]['status_order']) && $result[0]['status_order'] == 2) {
+        } else if ($statusOrder == 2) {
             $typ_btn2 = 'primary';
-        } else if (isset($result[0]['status_order']) && $result[0]['status_order'] == 3) {
+        } else if ($statusOrder == 3) {
             $typ_btn3 = 'success';
         }
 
-        if ($result[0]['status_order'] == 0) {
+        if ($statusOrder == 0) {
             $status = '<span class="badge bg-warning text-white">TO PAY</span>'; //0
-        } else if ($result[0]['status_order'] == 1) {
+        } else if ($statusOrder == 1) {
             $status = '<span class="badge bg-secondary text-white">CASH ON DELIVERY</span>'; //2
-        } else if ($result[0]['status_order'] == 2) {
+        } else if ($statusOrder == 2) {
             $status = '<span class="badge bg-primary text-white">SHIPPED</span>'; //2
         } else {
             $status = '<span class="badge bg-success text-white">RECIEVED</span>'; //3
         }
-        $ckid = $result[0]['checkout_id'];
-        echo "
-                <table class='table table-bordered'>
-                    <tr>
-                        <th colspan='2'><center>Customer Details</center></th>
-                    </tr>
-                    <tr>
-                        <th>Customer Name: </th>
-                        <td>" . $result[0]['fname'] . " " . $result[0]['lname'] . "</td>
-                    </tr>
-                    <tr>
-                    
-                    <th>Order Date: </th>
-                        <td>" . $date . "</td>
-                    </tr>
-                    <th>Status: </th>
-                        <td>
-                            <a class='btn btn-" . $typ_btn0 . "' href='viewParcel.php?userId=" . $_GET['userId'] . "&statusVP=0&ckid=" . $result[0]['checkout_id'] . "'>TO PAY</a>
+        $ckid = $checkoutId;
 
-                            <a class='btn btn-" . $typ_btn2 . "' href='viewParcel.php?userId=" . $_GET['userId'] . "&statusVP=2&ckid=" . $result[0]['checkout_id'] . "'>SHIPPED</a>
+        echo " 
+         
+        <table class='table table-bordered'>
+            <tr>
+                <th colspan='5'><center>Customer Details</center></th>
+            </tr>
+            <tr>
+                <th>Customer Name: </th>
+                <td>" . $fname . " " . $lname . "</td>
+            </tr>
+            <tr>
+                <th>Order Date: </th>
+                <td>" . $date . "</td>
+            </tr>
+            <tr>
+                <th>Status: </th>
+                <td>";
+    
+                // Only show Pending button if $isDisabled is true (pending order)
+                if ($isDisabled) {
+                    echo "
+                      <div >
+                        <button class='btn btn-warning '>Pending</button>
 
-                            <a class='btn btn-" . $typ_btn3 . "' onclick='addDelivery( $ckid)' >RECIEVED</a>
-                        </td>
-                    </tr>
-                    <th>Payment Method: </th>
-                        <td>" . $result[0]['payment_method'] . "</td>
-                    </tr> ";
-        if ($result[0]['payment_method'] !== 'Cash On Delivery') {
-            echo " 
-                    <th>Proof of Payment: </th>
-                        <td><a class='btn btn-primary' target='_blank' href='" . $result[0]['proof_gcpayment'] . "'>View</a></td>
-                    </tr>  
-                    <tr>";
-        }
-        echo "</table>
-
-                <table class='table table-bordered'>
-                <tr>
-                    <th colspan='5'><center>Order List</center></th>
-                </tr>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Product Description</th>
-                    <th>Category</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                </tr>
-            ";
+                        <button class='btn btn-light' onclick='handleClick(true, \"$checkoutId\")'>Approve</button>
+                        <button class='btn btn-light ' onclick='handleClick(false, \"$checkoutId\")'>Reject</button>
+                    </div>";
+                 
+                }
+    
+                // Show these buttons if $isDisabled is false (not pending)
+                if (!$isDisabled) {
+                    echo "
+                        <a class='btn btn-" . $typ_btn0 . "' href='viewParcel.php?userId=" . $_GET['userId'] . "&statusVP=0&ckid=" . $checkoutId . "'>TO PAY</a>
+                        <a class='btn btn-" . $typ_btn2 . "' href='viewParcel.php?userId=" . $_GET['userId'] . "&statusVP=2&ckid=" . $checkoutId . "'>SHIPPED</a>
+                        <a class='btn btn-" . $typ_btn3 . "' onclick='addDelivery($ckid)'>RECEIVED</a>
+                    ";
+                }
+    
+                  echo "  
+                </td>
+            </tr>
+            <tr>
+                <th>Payment Method: </th>
+                <td>" . $payment_method . "</td>
+            </tr>";
+    
+    // Show proof of payment only if the payment method is not "Cash On Delivery"
+    if ($payment_method !== 'Cash On Delivery') {
+        echo " 
+            <tr>
+                <th>Proof of Payment: </th>
+                <td><a class='btn btn-primary' target='_blank' href='" . $proof . "'>View</a></td>
+            </tr>  
+        ";
+    }
+    
+    echo "</table>
+        <table class='table table-bordered'>
+            <tr>
+                <th colspan='6'><center>Order List</center></th>
+            </tr>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Description</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+    ";
 
         $alltotal = 0;
         $finalTotal = 0;
         $totalquant = 0;
 
-        foreach ($result as $row) {
-            $totalquant += $row['checkout_Qty'];
+        // foreach ($result as $row) {
+            $totalquant += $checkoutQty;
 
-            $finalTotal = $row['price'] * $row['checkout_Qty'];
+            $finalTotal = $price * $checkoutQty;
 
             $alltotal += $finalTotal;
 
             echo "
                         <tr>
-                            <td>$row[title]</td>
-                            <td>$row[description]</td>
-                            <td>$row[cat_title]</td>
-                            <td>$row[checkout_Qty]</td>
-                            <td>&#8369;$row[price]</td>
+                            <td>$title</td>
+                            <td>$description</td>
+                            <td>$catTitle</td>
+                            <td>$checkoutQty</td>
+                            <td>&#8369;$price</td>
                             <td>$finalTotal</td>
                         </tr>
                     ";
-        }
+        // }
 
         echo "
                     <tr>
@@ -1482,7 +1570,7 @@ if (!isset($_POST['CheckOut'])): ?>
                         <td colspan='5' style='color:red'><b>" . $totalquant . "</b></td>
                     </tr>
                     <tr>
-                        <th>Total Price: </th>
+                        <th>Total Amount: </th>
                         <td colspan='5' style='color:red'><b>&#8369; " . $alltotal . "</b></td>
                     </tr>
                     
@@ -1498,52 +1586,112 @@ if (!isset($_POST['CheckOut'])): ?>
         $totalquant = 0;
         $result = $parcelObj->viewParcelClients($regId, $checkoutId);
 
-        $orderDate = $result[0]['order_date'];
+        $orderDate = "";
+
+        $orderDate =  "";
+        $fname="";
+        $mname="";
+        $lname="";
+        $payment_method="Cash On Delivery";
+        $checkoutQty=0;
+        $price=0;
+        $title="";
+        $description="";
+        $catTitle="";
+        $proof="";
+        $reason="";
+        $proofOfDelivery="";
+        $checkoutId=0;
+        $statusOrder=0;
+        if (empty(array_diff_key(array_flip([
+              'order_date','title','description','price','reason','cat_title','payment_method','m_name','proof_of_delivery',
+             'status_order', 'checkout_id', 'fname', 'lname', 'proof_gcpayment', 'checkout_Qty']), $result))) {
+           $orderDate=$result['order_date'];
+           $fname=$result['fname'];
+           $mname=$result['m_name'];
+           $lname=$result['lname'];
+           $reason=$result['reason'];
+           $payment_method=$result['payment_method'];
+           $proofOfDelivery=$result['proof_of_delivery'];
+           $checkoutQty=$result['checkout_Qty'];
+           $price=$result['price'];
+           $title=$result['title'];
+           $description=$result['description'];
+           $catTitle=$result['cat_title'];
+           $proof=$result['proof_gcpayment'];
+           $checkoutId=$result['checkout_id'];
+           $statusOrder=$result['status_order'];
+
+
+
+        }
 
         $date = new DateTime($orderDate);
 
         $date = $date->format('F j, Y');
-        if ($result[0]['order_date'] == 0) {
+        if ($orderDate == 0) {
             $selected = 'selected';
-        } else if ($result[0]['order_date'] == 1) {
-        } else if ($result[0]['order_date'] == 2) {
+        } else if ($orderDate == 1) {
+        } else if ($orderDate == 2) {
             $selected = 'selected';
         } else {
             $selected = 'selected';
         }
-        $status_of_order = $result[0]['status_order'];
+        $status_of_order = $statusOrder;
 
-        if ($status_of_order == 0) {
-            $status = '<span class="badge bg-warning text-white">TO PAY</span>'; //0
-        } else if ($status_of_order == 1) {
-            $status = '<span class="badge bg-secondary text-white">CASH ON DELIVERY</span>'; //2
-        } else if ($status_of_order == 2) {
-            $status = '<span class="badge bg-primary text-white">SHIPPED</span>'; //2
-        } else {
-            $status = '<span class="badge bg-success text-white">RECIEVED</span>'; //3
+        switch ($status_of_order) {
+            case -2:
+                $status = '<span class="badge bg-danger text-white">REJECTED</span>';
+                break;
+            case 0:
+                $status = '<span class="badge bg-warning text-white">TO PAY</span>';
+                break;
+            case 1:
+                $status = '<span class="badge bg-secondary text-white">CASH ON DELIVERY</span>';
+                break;
+            case 2:
+                $status = '<span class="badge bg-primary text-white">SHIPPED</span>';
+                break;
+            default:
+                $status = '<span class="badge bg-success text-white">RECEIVED</span>';
+                break;
         }
         echo "
-            <table class='table table-bordered'>
+        <table class='table table-bordered'>
+            <tr>
+                <th colspan='2'><center>Customer Details</center></th>
+            </tr>
+            <tr>
+                <th>Customer Name: </th>
+                <td>" . $fname . " " . $mname . " " . $lname . "</td>
+            </tr>
+            <tr>
+                <th>Order Date: </th>
+                <td>" . $date . "</td>
+            </tr>
+            <tr>
+                <th>Status: </th>
+                <td>$status</td>
+            </tr>
+    ";
+    
+    // Check if status_order is -2, and if so, show the reason before the payment method
+        if ($statusOrder == -2) {
+            echo "
                 <tr>
-                    <th colspan='2'><center>Customer Details</center></th>
+                    <th>Reason for Rejection: </th>
+                    <td>" . htmlspecialchars($reason) . "</td>
                 </tr>
-                <tr>
-                    <th>Customer Name: </th>
-                    <td>" . $result[0]['fname'] . " " . $result[0]['m_name'] . " " . $result[0]['lname'] . "</td>
-                </tr>
-                <tr>
-                    <th>Order Date: </th>
-                    <td>" . $date . "</td>
-                </tr>
-                <tr>
-                    <th>Status: </th>
-                    <td>$status</td>
-                </tr>
-                <tr>
-                    <th>Payment Method: </th>
-                    <td>" . htmlspecialchars($result[0]['payment_method']) . "</td>
-                </tr>
-        ";
+            ";
+        }
+    
+    echo "
+            <tr>
+                <th>Payment Method: </th>
+                <td>" . htmlspecialchars($payment_method) . "</td>
+            </tr>
+        </table>
+    ";
 
         // Check the status of the order
         if ($status_of_order == 3) {
@@ -1551,7 +1699,7 @@ if (!isset($_POST['CheckOut'])): ?>
                 <tr>
                     <th>Proof of Delivery:</th>
                     <td>
-                        <img src='" . htmlspecialchars($result[0]['proof_of_delivery']) . "' alt='Proof of Delivery' style='width: max; height: 300px;'>
+                        <img src='" . htmlspecialchars($proofOfDelivery) . "' alt='Proof of Delivery' style='width: max; height: 300px;'>
                     </td>
                 </tr>
             ";
@@ -1559,7 +1707,7 @@ if (!isset($_POST['CheckOut'])): ?>
 
         echo "
                 <!-- <th>Proof of Payment: </th>
-                    <td><a class='btn btn-primary' target='_blank' href='" . $result[0]['proof_gcpayment'] . "'>View</a></td>
+                    <td><a class='btn btn-primary' target='_blank' href='" . $proof . "'>View</a></td>
                 </tr>  
                 <tr>
                 --!>
@@ -1584,32 +1732,30 @@ if (!isset($_POST['CheckOut'])): ?>
         $finalTotal = 0;
         $totalquant = 0;
 
-        foreach ($result as $row) {
-            $totalquant += $row['checkout_Qty'];
+        $totalquant += $checkoutQty;
 
-            $finalTotal = $row['price'] * $row['checkout_Qty'];
+        $finalTotal = $price * $checkoutQty;
 
-            $alltotal += $finalTotal;
+        $alltotal += $finalTotal;
 
             echo "
                     <tr>
-                        <td>$row[title]</td>
-                        <td>$row[description]</td>
-                        <td>$row[cat_title]</td>
-                        <td>$row[checkout_Qty]</td>
-                        <td>&#8369;$row[price]</td>
+                        <td>$title</td>
+                        <td>$description</td>
+                        <td>$catTitle</td>
+                        <td>$checkoutQty</td>
+                        <td>&#8369;$price</td>
                         <td>$finalTotal</td>
                     </tr>
                 ";
-        }
 
-        echo "
+                echo "
                 <tr>
                     <th>Total Quantity: </th>
                     <td colspan='5' style='color:red'><b>" . $totalquant . "</b></td>
                 </tr>
                 <tr>
-                    <th>Total Price: </th>
+                    <th>Total Amount: </th>
                     <td colspan='5' style='color:red'><b>&#8369; " . $alltotal . "</b></td>
                 </tr>
                 
@@ -1618,6 +1764,9 @@ if (!isset($_POST['CheckOut'])): ?>
                            
             
             ";
+        }
+
+      
         // if ($result[0]['status_order'] == 3) {
         //     echo "
         //             <a href='#' class='btn btn-info mt-2'>
@@ -1626,7 +1775,6 @@ if (!isset($_POST['CheckOut'])): ?>
         //         ";
         // }
     
-    }
 
     ?>
 

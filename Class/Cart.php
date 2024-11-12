@@ -111,11 +111,37 @@ class Cart extends Db
                     "phone"        => $data['phonenum'],
                     "address"      => $data['address'],
                     "payment_method" => $data['paymenttype'],
-                    "proof_gcpayment" => $file
+                    "proof_gcpayment" => $file,
+                 
                 ]);
 
                 $this->stocksItem($row['menuId'], $row['qty']);
             }
+
+            return array(
+                'message' => $result,
+                'status'  => 'success',
+            );
+        } catch (Exception $e) {
+            return array(
+                'message' => 'Error: ' . $e->getMessage(),
+                'status'  => 'error',
+            );
+        }
+    }
+
+    public function handleApproval($isApproved, $checkoutID,$reason)
+    {
+
+        try {
+       
+            $stmt = $this->connect()->prepare("UPDATE tbl_checkout SET status_order = :status_order , reason = :reason WHERE checkout_id = :checkout_id");
+            $result = $stmt->execute([
+                "status_order" => $isApproved ?0 :-2, // 0 = 'APPROVED'  -1 = 'PENDING'  -2="REJECTED"  
+                'reason'=>$reason,
+                "checkout_id" => $checkoutID    
+            ]);
+            
 
             return array(
                 'message' => $result,

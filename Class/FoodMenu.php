@@ -5,7 +5,7 @@ class FoodMenu extends Db
     public function getFoodMenu()
     {
         try {
-            $stmt = $this->connect()->prepare("SELECT * FROM tbl_menu m LEFT JOIN tbl_category ct ON ct.cat_id=m.cat_id WHERE m.status=:status");
+            $stmt = $this->connect()->prepare("SELECT * FROM tbl_menu m LEFT JOIN tbl_category ct ON ct.cat_id=m.cat_id WHERE m.status=:status  ORDER BY m.menu_id DESC");
             $stmt->execute([
                 'status' => 'active'
             ]);
@@ -15,7 +15,7 @@ class FoodMenu extends Db
             while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $arr[] = $result;
             }
-
+       
             return $arr;
         } catch (Exception $e) {
             return $e->getMessage();
