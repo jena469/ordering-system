@@ -15,7 +15,7 @@ class FoodMenu extends Db
             while ($result = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $arr[] = $result;
             }
-       
+
             return $arr;
         } catch (Exception $e) {
             return $e->getMessage();
@@ -87,13 +87,13 @@ class FoodMenu extends Db
         include('Upload.php');
         try {
             $db = $this->connect();
-            $stmt = $db->prepare("SELECT reg_id FROM tbl_checkout WHERE checkout_id = :checkout_id");
-            $stmt->bindParam(':checkout_id', $data['checkout_id']);
+            $stmt = $db->prepare("SELECT reg_id FROM tbl_checkout WHERE transaction_id = :transaction_id");
+            $stmt->bindParam(':transaction_id', $data['transaction_id']);
             $stmt->execute();
             $userId = $stmt->fetchColumn();
-            // Ensure $checkout_id is defined
-            if (isset($data['checkout_id'])) {
-                $checkout_id = $data['checkout_id'];
+            // Ensure $transaction_id is defined
+            if (isset($data['transaction_id'])) {
+                $transaction_id = $data['transaction_id'];
             } else {
                 throw new Exception("Checkout ID is missing.");
             }
@@ -106,20 +106,20 @@ class FoodMenu extends Db
 
                 $stmt = $db->prepare("UPDATE tbl_checkout SET 
                         proof_of_delivery = :proof_of_delivery, status_order = :status_order , delivered_date = :delivered_date , active = :active
-                        WHERE checkout_id = :checkout_id");
+                        WHERE transaction_id = :transaction_id");
 
                 $stmt->bindParam(':proof_of_delivery', $img);
                 $stmt->bindParam(':active', $active);
                 $stmt->bindParam(':delivered_date', $currentDate);
                 $stmt->bindParam(':status_order', $status_order);
-                $stmt->bindParam(':checkout_id', $checkout_id);
+                $stmt->bindParam(':transaction_id', $transaction_id);
 
 
                 // Execute the statement
                 if ($stmt->execute()) {
                     // Check if any rows were affected
                     if ($stmt->rowCount() > 0) {
-                        header("Location: viewParcel.php?userId={$userId}&statusVP=3&ckid={$checkout_id}");
+                        header("Location: viewParcel.php?userId={$userId}&statusVP=3&transaction_id={$transaction_id}");
                         exit();
                     } else {
                         throw new Exception("No rows were updated. Check if the checkout ID is valid.");

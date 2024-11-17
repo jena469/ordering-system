@@ -1,7 +1,6 @@
 <?php
 require "../../connection/index.php";
 session_start();
-$adminId = $_SESSION['login_id'];
 
 if (isset($_POST['id'], $_POST['mode'], $_POST['accountNum'], $_POST['name'])) {
     $id = $_POST['id'];
@@ -9,46 +8,16 @@ if (isset($_POST['id'], $_POST['mode'], $_POST['accountNum'], $_POST['name'])) {
     $accountNum = $_POST['accountNum'];
     $name = strtoupper(htmlspecialchars($_POST['name']));
 
-    // Initialize variable for image URL
-    $imageUrl = null;
+    // Initialize variable for image data
+    $imageData = null;
 
     // Check if a new image is uploaded
     if (isset($_FILES['editImgs']) && $_FILES['editImgs']['error'] === UPLOAD_ERR_OK) {
-        // New image uploaded
+        // Read the image file as binary data
         $fileTmpName = $_FILES['editImgs']['tmp_name'];
-        $fileData = file_get_contents($fileTmpName); // Read the image file
-
-        // Upload to ImgBB
-        $apiKey = '1129ed162824f2cede65deb4519d8415'; // Your ImgBB API key
-        $url = 'https://api.imgbb.com/1/upload'; // ImgBB upload URL
-        $data = [
-            'key' => $apiKey,
-            'image' => base64_encode($fileData) // Encode image data to base64
-        ];
-
-        // Use cURL to upload the image
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        // Decode the JSON response
-        $responseData = json_decode($response, true);
-        if (isset($responseData['data']['url'])) {
-            $imageUrl = $responseData['data']['url']; // Get the image URL
-        } else {
-            // Handle error in uploading image
-            header('Content-Type: application/json');
-            $response = ['status' => '500', 'message' => 'Error uploading image: ' . $responseData['error']];
-            echo json_encode($response);
-            exit;
-        }
+        $imageData = file_get_contents($fileTmpName); // Read the binary image file
     } else {
-        // No new image uploaded, retrieve the current image URL from the database
+        // No new image uploaded, retrieve the current image data from the database
         $query = "SELECT image FROM bank WHERE id=?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $id);
@@ -56,16 +25,16 @@ if (isset($_POST['id'], $_POST['mode'], $_POST['accountNum'], $_POST['name'])) {
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
 
-        // Assign current image URL if exists
+        // Assign current image data if exists
         if ($row) {
-            $imageUrl = $row['image'];
+            $imageData = $row['image'];
         }
         $stmt->close();
     }
 
     // Prepare the update statement
-    if ($imageUrl !== null) {
-        // Update with new image URL
+    if ($imageData !== null) {
+        // Update with new image data
         $sql = "UPDATE bank SET 
                 bankName=?, 
                 accountNumber=?, 
@@ -73,7 +42,7 @@ if (isset($_POST['id'], $_POST['mode'], $_POST['accountNum'], $_POST['name'])) {
                 image=? 
                 WHERE id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssi", $mode, $accountNum, $name, $imageUrl, $id);
+        $stmt->bind_param("ssssi", $mode, $accountNum, $name, $imageData, $id);
     } else {
         // Update without changing the image
         $sql = "UPDATE bank SET 
@@ -97,9 +66,6 @@ if (isset($_POST['id'], $_POST['mode'], $_POST['accountNum'], $_POST['name'])) {
     }
 
     $stmt->close();
-    if (isset($logStmt)) {
-        $logStmt->close();
-    }
 } else {
     header('Content-Type: application/json');
     $response = ['status' => '400', 'message' => 'Missing required fields.'];

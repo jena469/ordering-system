@@ -29,9 +29,7 @@ function handlePlan(bankStatus = "active") {
 				<td class="text-nowrap">${bankRow.accountNumber}</td>
 				<td class="text-nowrap">${bankRow.name}</td>
 				<td class="text-nowrap">
-					<img src="${
-            bankRow.imageData
-          }" style="width: 50px; cursor: pointer;" onclick="showReceipt('${
+					<img src="${bank.imageData}" style="width: 50px; cursor: pointer;" onclick="showReceipt('${
       bankRow.imageData
     }')">
 

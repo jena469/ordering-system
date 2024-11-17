@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <?php include('navbar.php'); 
+    <?php include('navbar.php');
     ?>
 
     <div class="container mb-5">
@@ -20,15 +20,16 @@
                 View Parcel Clients
             </div>
             <div class="card-body">
-                 
-                <?php 
-               
-               $userId = isset($_GET['userId']) ? htmlspecialchars($_GET['userId']) : 'Not provided';
-               $checkoutId = isset($_GET['checkoutId']) ? htmlspecialchars($_GET['checkoutId']) : 'Not provided';
 
-              
-               // Call the function with both parameters
-               viewParcelClientsUser($userId, $checkoutId);
+                <?php
+
+                $userId = isset($_GET['userId']) ? htmlspecialchars($_GET['userId']) : 'Not provided';
+                $checkoutId = isset($_GET['checkoutId']) ? htmlspecialchars($_GET['checkoutId']) : 'Not provided';
+
+                $transaction_id = isset($_GET['transaction_id']) ? htmlspecialchars($_GET['transaction_id']) : 'Not provided';
+
+                // Call the function with both parameters
+                viewParcelClientsUser($userId, $checkoutId, $transaction_id);
                 ?>
             </div>
         </div>

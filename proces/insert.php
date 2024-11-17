@@ -16,6 +16,7 @@ $password = md5($_POST['password']);
 if ($stmt->execute()) {
 	$last_id = $conn->insert_id;
 	$_SESSION['reg_id'] = $last_id;
+	$_SESSION['customerID'] = $last_id;
 	$_SESSION['user'] = 'user';
 	$_SESSION['customerName'] = $fname . ' ' . $m_name . ' ' . $lname;
 	echo json_encode(['status' => 'success', 'message' => 'Successfully created an account.']);

@@ -115,7 +115,8 @@ if (
 												'accountNumber' => $row['accountNumber'],
 												'name' => $row['name'],
 												'status' => $row['status'],
-												'imageData' => $row['image']
+												'imageData' => 'data:image/jpeg;base64,' . base64_encode($row['image']) // Convert BLOB to Base64
+										
 											);
 											$bankArray[] = $bankInfo;
 										}

@@ -1,7 +1,7 @@
 <?php
 include "../../connection/index.php";
 session_start();
-$adminId = $_SESSION['login_id'];
+
 $nameBank = strtoupper(htmlspecialchars($_POST['nameBank']));
 $accountNumber = htmlspecialchars($_POST['accountNumber']);
 $ownerName = strtoupper(htmlspecialchars($_POST['ownerName']));
@@ -14,47 +14,35 @@ if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
-// Upload image to ImgBB
+// Read the image file and prepare for database insertion
 $imageFile = $_FILES['file']['tmp_name'];
-$imageData = base64_encode(file_get_contents($imageFile)); // Convert the image to base64
+$imageData = file_get_contents($imageFile); // Get binary data of the image
+$imageType = mime_content_type($imageFile); // Get the MIME type of the image
 
-$apiKey = '1129ed162824f2cede65deb4519d8415'; // Your ImgBB API key
-$postData = [
-    'key' => $apiKey,
-    'image' => $imageData
-];
+// Check if the file is a valid image
+if (strpos($imageType, 'image/') !== 0) {
+    header('Content-Type: application/json');
+    $response = ['status' => '400', 'message' => 'Uploaded file is not a valid image'];
+    echo json_encode($response);
+    exit;
+}
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'https://api.imgbb.com/1/upload');
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+// Prepare the SQL statement
+$stmt = $conn->prepare("INSERT INTO bank (bankName, accountNumber, name, image) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $nameBank, $accountNumber, $ownerName, $imageData);
 
-$response = curl_exec($ch);
-curl_close($ch);
-
-$responseData = json_decode($response, true);
-
-
-if (isset($responseData['data']['url'])) {
-    $imageUrl = $responseData['data']['url'];
-    $sql = "INSERT INTO bank (bankName, accountNumber, name, image) 
-            VALUES ('$nameBank', '$accountNumber', '$ownerName', '$imageUrl')";
-
-    if ($conn->query($sql) === TRUE) {
-        header('Content-Type: application/json');
-        $response = ['status' => '200', 'message' => 'success'];
-        echo json_encode($response);
-    } else {
-        header('Content-Type: application/json');
-        $response = ['status' => '500', 'message' => 'Error inserting bank record: ' . $conn->error];
-        echo json_encode($response);
-    }
+// Execute the statement and check for success
+if ($stmt->execute()) {
+    header('Content-Type: application/json');
+    $response = ['status' => '200', 'message' => 'success'];
+    echo json_encode($response);
 } else {
     header('Content-Type: application/json');
-    $response = ['status' => 'error', 'message' => 'Image upload to ImgBB failed: ' . $responseData['error']['message']];
+    $response = ['status' => '500', 'message' => 'Error inserting bank record: ' . $stmt->error];
     echo json_encode($response);
 }
 
+// Close the statement and connection
+$stmt->close();
 $conn->close();
 ?>

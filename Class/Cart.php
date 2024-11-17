@@ -42,7 +42,7 @@ class Cart extends Db
             $stmt = $this->connect()->prepare("SELECT * FROM tbl_menu WHERE menu_id=:menu_id AND status=:status ORDER BY menu_id");
             $stmt->execute([
                 'menu_id' => $menuId,
-                "status"  => $status
+                "status" => $status
             ]);
 
             $arr = array();
@@ -95,24 +95,32 @@ class Cart extends Db
         try {
             if (count($orderItem) == 0) {
                 return array(
-                    'status'  => 'warning',
+                    'status' => 'warning',
                 );
                 exit;
             }
+            function generateTransactionID($prefix = 'TXN')
+            {
+                $uniqueID = uniqid($prefix, false);
+                return strtoupper($uniqueID);
+            }
+
+            // Generate the transaction ID once per transaction
+            $transactionID = generateTransactionID();
 
             foreach ($orderItem as $row) {
-                $stmt = $this->connect()->prepare("INSERT INTO tbl_checkout (reg_id, menu_id, cat_id, checkout_Qty, phone, address, payment_method, proof_gcpayment) VALUES (:reg_id, :menu_id, :cat_id, :checkout_Qty, :phone, :address, :payment_method, :proof_gcpayment)");
+                $stmt = $this->connect()->prepare("INSERT INTO tbl_checkout (transaction_id, reg_id, menu_id, cat_id, checkout_Qty, phone, address, payment_method, proof_gcpayment) VALUES (:transaction_id, :reg_id, :menu_id, :cat_id, :checkout_Qty, :phone, :address, :payment_method, :proof_gcpayment)");
 
                 $result = $stmt->execute([
-                    "menu_id"      => $row['menuId'],
-                    "cat_id"       => $row['categoryId'],
-                    "reg_id"       => $row['UserId'],
+                    "transaction_id" => $transactionID, // Corrected variable
+                    "menu_id" => $row['menuId'],
+                    "cat_id" => $row['categoryId'],
+                    "reg_id" => $row['UserId'],
                     "checkout_Qty" => $row['qty'],
-                    "phone"        => $data['phonenum'],
-                    "address"      => $data['address'],
+                    "phone" => $data['phonenum'],
+                    "address" => $data['address'],
                     "payment_method" => $data['paymenttype'],
                     "proof_gcpayment" => $file,
-                 
                 ]);
 
                 $this->stocksItem($row['menuId'], $row['qty']);
@@ -120,37 +128,37 @@ class Cart extends Db
 
             return array(
                 'message' => $result,
-                'status'  => 'success',
+                'status' => 'success',
             );
         } catch (Exception $e) {
             return array(
                 'message' => 'Error: ' . $e->getMessage(),
-                'status'  => 'error',
+                'status' => 'error',
             );
         }
     }
 
-    public function handleApproval($isApproved, $checkoutID,$reason)
+    public function handleApproval($isApproved, $checkoutID, $transaction_id, $reason)
     {
 
         try {
-       
-            $stmt = $this->connect()->prepare("UPDATE tbl_checkout SET status_order = :status_order , reason = :reason WHERE checkout_id = :checkout_id");
+
+            $stmt = $this->connect()->prepare("UPDATE tbl_checkout SET status_order = :status_order , reason = :reason WHERE transaction_id = :transaction_id");
             $result = $stmt->execute([
-                "status_order" => $isApproved ?0 :-2, // 0 = 'APPROVED'  -1 = 'PENDING'  -2="REJECTED"  
-                'reason'=>$reason,
-                "checkout_id" => $checkoutID    
+                "status_order" => $isApproved ? 0 : -2, // 0 = 'APPROVED'  -1 = 'PENDING'  -2="REJECTED"  
+                'reason' => $reason,
+                "transaction_id" => $transaction_id
             ]);
-            
+
 
             return array(
                 'message' => $result,
-                'status'  => 'success',
+                'status' => 'success',
             );
         } catch (Exception $e) {
             return array(
                 'message' => 'Error: ' . $e->getMessage(),
-                'status'  => 'error',
+                'status' => 'error',
             );
         }
     }

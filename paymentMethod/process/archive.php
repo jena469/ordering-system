@@ -1,7 +1,6 @@
 <?php
 require '../../connection/index.php';
 session_start();
-$adminId = $_SESSION['login_id'];
 
 if (isset($_GET['id'], $_GET['status'])) {
 	$planId = $_GET['id'];

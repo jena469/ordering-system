@@ -9,19 +9,20 @@
       </div>
       <div class="modal-body">
         <form action="route.php" method="post" enctype="multipart/form-data">
-        <div class="row">
+          <div class="row">
             <div class="col">
-                <div class="form-group">
-                    <label>Upload Proof of Delivery:</label>
-                    <input type="file" required name="file" id="proof_of_delivery" class="form-control">
-                    <input type="hidden" name="updateProof" value="updateProof">
-                </div>
+              <div class="form-group">
+
+                <label>Upload Proof of Delivery:</label>
+                <input type="file" required name="file" id="proof_of_delivery" class="form-control">
+                <input type="hidden" name="updateProof" value="updateProof">
+              </div>
             </div>
-        </div>
+          </div>
       </div>
       <div class="modal-footer">
-        <input type="hidden" id="checkout_id" name="checkout_id">
-
+        <!-- <input type="hidden" id="checkout_id" name="checkout_id"> -->
+        <input type="hidden" required name="transaction_id" id="transaction_id" class="form-control">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
         <button type="submit" class="btn btn-success">Upload</button>
         </form>
