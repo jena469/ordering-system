@@ -126,31 +126,40 @@
 							</tr>
 						<?php endforeach; ?>
 						<tr style="border-top: 1px solid #000;">
-							<td colspan='3'>
+							<td colspan='3' class="total" style="padding-top: 10px">
 								<?= $paymentMethod ?>
 							</td>
 							<?php
 							if ($paymentMethod == 'Cash On Delivery') {
-								echo "<td  class='total'>
+								echo "<td  class='total' style='padding-top: 10px'>
 										50.00
 							</td>";
 							}
 							?>
 						</tr>
-						<tr style="border-top: 1px solid #000;">
-							<td colspan="3" class="total" style="padding-top: 10px">Subtotal</td>
-							<td class="total" style="padding-top: 10px">
-								<?= htmlspecialchars(number_format($totalamount, 2)) ?>
+						<tr>
+							<td colspan="3" class="total">Subtotal</td>
+							<td class="total">
+								<?php
+								$codFee = $paymentMethod === 'Cash On Delivery' ? 50.00 : 0;
+								echo htmlspecialchars(number_format($totalamount, 2));
+								?>
 							</td>
 						</tr>
+
 						<tr>
 							<td colspan="3" class="total">Amount Due</td>
-							<td class="total"><?= htmlspecialchars(number_format($totalamount, 2)) ?></td>
+							<td class="total">
+								<?= htmlspecialchars(number_format($totalamount + $codFee, 2)) ?>
+							</td>
 						</tr>
 						<tr class="footer" style="font-size: 20px">
 							<td colspan="3" class="total">Total Amount</td>
-							<td class="total"><?= htmlspecialchars(number_format($totalamount, 2)) ?></td>
+							<td class="total">
+								<?= htmlspecialchars(number_format($totalamount + $codFee, 2)) ?>
+							</td>
 						</tr>
+
 					</tbody>
 					<tfoot>
 						<tr>

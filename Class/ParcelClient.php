@@ -37,17 +37,17 @@ ORDER BY ck.checkout_id DESC;
     {
         try {
             $stmt = $this->connect()->prepare("SELECT * 
-FROM tbl_checkout ck 
-LEFT JOIN tbl_registration reg ON reg.reg_id = ck.reg_id 
-LEFT JOIN tbl_menu m ON m.menu_id = ck.menu_id
-WHERE ck.status_order != -2
-AND ck.checkout_id IN (
-    SELECT MAX(ck.checkout_id)
-    FROM tbl_checkout ck
-    WHERE ck.status_order != -2
-    GROUP BY ck.transaction_id
-)
-ORDER BY ck.order_date DESC;
+            FROM tbl_checkout ck 
+            LEFT JOIN tbl_registration reg ON reg.reg_id = ck.reg_id 
+            LEFT JOIN tbl_menu m ON m.menu_id = ck.menu_id
+            WHERE ck.status_order != -2
+            AND ck.checkout_id IN (
+                SELECT MAX(ck.checkout_id)
+                FROM tbl_checkout ck
+                WHERE ck.status_order != -2
+                GROUP BY ck.transaction_id
+            )
+            ORDER BY ck.checkout_id desc;
 ");
             $stmt->execute();
 
