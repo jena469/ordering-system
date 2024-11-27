@@ -49,11 +49,11 @@ if (
         </div>
     </div>
     <script>
-        function addDelivery(transaction_id) {
-            // alert(transaction_id);
-            $('#transaction_id').val(transaction_id); // Note: Corrected ID 'transaction_id'
-            $('#addDeliveryProof').modal('show');
-        }
+        // function addDelivery(transaction_id) {
+        //     // alert(transaction_id);
+        //     $('#transaction_id').val(transaction_id); // Note: Corrected ID 'transaction_id'
+        //     $('#addDeliveryProof').modal('show');
+        // }
 
 
         const handleClick = (isApproved = true, checkoutID, transaction_id) => {
@@ -155,6 +155,9 @@ if (
 
     <?php include('Modal/deliveryProof_modal.php');
     include('footer.php'); ?>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="path/to/your/custom/script.js"></script>
+
 </body>
 
 </html>

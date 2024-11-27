@@ -172,9 +172,12 @@
 				const data = await response.json();
 				const {
 					message,
-					status
+					status,
+					transaction_id,
+					reg_id
 				} = data;
 
+				console.log("data", data)
 				if (status === 'success') {
 					Swal.fire({
 						title: 'Success!',
@@ -183,7 +186,8 @@
 						timer: 1500,
 						showConfirmButton: false
 					});
-					setTimeout(() => window.location = "reciept.php", 1500);
+					setTimeout(() => window.location =
+						`viewParcelClient.php?userId=${reg_id}&transaction_id=${transaction_id}`, 1500);
 				} else {
 					Swal.fire({
 						title: 'Error!',

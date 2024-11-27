@@ -347,30 +347,39 @@ if (!isset($_POST['CheckOut'])): ?>
         die();
     }
 
-    if (isset($_POST['updateProof'])) {
-        $response = $menuObj->updateProof(
-            $_POST,
-            $_FILES
-        );
-
-        // if ($response['status'] == 'success') {
-        //     url(
-        //         'success',
-        //         'Successfully Save.',
-        //         'foodMenu.php'
-        //     );
-        // } else {
+    // if (isset($_POST['updateProof'])) {
+    //     $response = $menuObj->updateProof(
+    //         $_POST,
+    //         $_FILES
+    //     );
     
-        //     url(
-        //         'error',
-        //         $response['message'],
-        //         'foodMenu.php'
-        //     );
-        // }
+    // if ($response['status'] == 'success') {
+    //     url(
+    //         'success',
+    //         'Successfully Save.',
+    //         'foodMenu.php'
+    //     );
+    // } else {
     
-        // die();
-    }
-
+    //     url(
+    //         'error',
+    //         $response['message'],
+    //         'foodMenu.php'
+    //     );
+    // }
+    
+    // die();
+    // }
+    // if (isset($_POST['updateProof'])) {
+    //     $response = $menuObj->updateProof($_POST);
+    //     if ($response['status'] === 'error') {
+    //         echo json_encode(['error' => $response['message']]);
+    //         http_response_code(400);
+    //     } else {
+    //         echo json_encode(['success' => true]);
+    //     }
+    // }
+    
     if (isset($_POST['UpdateFood'])) {
 
         $response = $menuObj->updateFoodMenu(
@@ -496,7 +505,9 @@ if (!isset($_POST['CheckOut'])): ?>
             unset($_SESSION['addedOrder']);
             echo json_encode([
                 'message' => 'Order placed Successfully.',
-                'status' => 'success'
+                'status' => 'success',
+                'transaction_id' => $response['transaction_id'],
+                'reg_id' => $response['reg_id'],
             ]);
 
         } elseif ($response['status'] == 'warning') {
@@ -1535,7 +1546,7 @@ if (!isset($_POST['CheckOut'])): ?>
             echo "
                 <a class='btn btn-" . $typ_btn0 . "' href='viewParcel.php?userId=" . $_GET['userId'] . "&statusVP=0&ckid=" . $checkoutId . "&transaction_id=" . $transaction_id . "'>TO PAY</a>
                 <a class='btn btn-" . $typ_btn2 . "' href='viewParcel.php?userId=" . $_GET['userId'] . "&statusVP=2&ckid=" . $checkoutId . "&transaction_id=" . $transaction_id . "'>SHIPPED</a>
-                <a class='btn btn-" . $typ_btn3 . "' onclick='addDelivery(\"" . $transaction_id . "\")'>RECEIVED</a>
+                <a class='btn btn-" . $typ_btn3 . "'href='viewParcel.php?userId=" . $_GET['userId'] . "&statusVP=3&ckid=" . $checkoutId . "&transaction_id=" . $transaction_id . "'>RECEIVED</a>
             ";
         }
 
@@ -1728,21 +1739,32 @@ if (!isset($_POST['CheckOut'])): ?>
 		<tr>
 			<th>Payment Method: </th>
 			<td>" . htmlspecialchars($paymentMethod) . "</td>
-		</tr>
-	</table>
-	";
+        </tr>";
+
+        if ($statusOrder == 3) {
+            echo "
+            <tr>
+                <th>Receipt:</th>
+                <td><button class='btn btn-primary' onclick='window.location.href=\"receipt.php?data=" . urlencode(json_encode($result)) . "\"'>Receipt</button></td>
+            </tr>";
+
+        }
+
+
+        echo "</table>";
 
         // Display proof of delivery if available
         if ($statusOrder == 3) {
-            echo "
-	<tr>
-		<th>Proof of Delivery:</th>
-		<td>
-			<img src='" . htmlspecialchars($proofOfDelivery) . "' alt='Proof of Delivery'
-				style='width: max; height: 300px;'>
-		</td>
-	</tr>
-	";
+            // echo "<button class='btn btn-primary'>Receipt</button>";
+            //         echo "
+            // <tr>
+            // 	<th>Proof of Delivery:</th>
+            // 	<td>
+            // 		<img src='" . htmlspecialchars($proofOfDelivery) . "' alt='Proof of Delivery'
+            // 			style='width: max; height: 200px;'>
+            // 	</td>
+            // </tr>
+            // ";
         }
 
         // Display the order list

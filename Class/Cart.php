@@ -104,14 +104,12 @@ class Cart extends Db
                 $uniqueID = uniqid($prefix, false);
                 return strtoupper($uniqueID);
             }
-
-            // Generate the transaction ID once per transaction
             $transactionID = generateTransactionID();
 
             foreach ($orderItem as $row) {
                 $stmt = $this->connect()->prepare("INSERT INTO tbl_checkout (transaction_id, reg_id, menu_id, cat_id, checkout_Qty, phone, address, payment_method, proof_gcpayment) VALUES (:transaction_id, :reg_id, :menu_id, :cat_id, :checkout_Qty, :phone, :address, :payment_method, :proof_gcpayment)");
 
-                $result = $stmt->execute([
+                $result = $stmt->execute(params: [
                     "transaction_id" => $transactionID, // Corrected variable
                     "menu_id" => $row['menuId'],
                     "cat_id" => $row['categoryId'],
@@ -124,9 +122,12 @@ class Cart extends Db
                 ]);
 
                 $this->stocksItem($row['menuId'], $row['qty']);
+                $regID = $row['UserId'];
             }
 
             return array(
+                'transaction_id' => $transactionID,
+                'reg_id' => $regID,
                 'message' => $result,
                 'status' => 'success',
             );

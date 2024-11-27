@@ -75,8 +75,8 @@
                                 <small id="minimumOrderNote" style="display: none; color: red;">* Minimum order of
                                     &#8369;500 required for delivery</small>
                             </td>
-                            <th>Payment Method</th>
-                            <td colspan="4">
+                            <th colspan="2">Payment Method</th>
+                            <td colspan="3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" value="gcash" id="gcash"
                                         name="payment_method" required>
@@ -138,17 +138,20 @@
                 const checkoutButton = document.getElementById("btnOrderProcess");
 
                 shippingFeeRow.style.display = deliveryOption ? "table-row" : "none";
-                minimumOrderNote.style.display = deliveryOption ? "block" : "none";
+
+                if (deliveryOption && baseTotal < 500) {
+                    minimumOrderNote.style.display = "block";
+                    checkoutButton.disabled = true;
+                } else {
+                    minimumOrderNote.style.display = "none";
+                }
 
                 const finalTotal = deliveryOption ? baseTotal + shippingFee : baseTotal;
                 finalTotalElement.textContent = finalTotal.toFixed(2);
 
-                if (deliveryOption && baseTotal < 500) {
-                    checkoutButton.disabled = true;
-                } else {
-                    checkCheckoutButtonState();
-                }
+                checkCheckoutButtonState();
             }
+
 
             function checkCheckoutButtonState() {
                 const pickup = document.getElementById('pickup').checked;

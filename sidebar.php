@@ -34,7 +34,7 @@
     <div class="sidebar-header">
         <img style="border-radius: 50%;"
             src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/restaurant-logo-template-design-deaa426a55e5dc6d4604fe46f2bb543a_screen.jpg?ts=1566606296"
-            width="40" height="40" alt="logo"> <span class="ml-2">Bezamor</span>
+            width="40" height="40" alt="logo"> <span class="ml-2">Benzamor</span>
     </div>
 
     <ul class="list-unstyled components">
@@ -64,6 +64,11 @@
                 <i class="fas fa-credit-card"></i> Payment Method
             </a>
         </li>
+        <!-- <li>
+            <a href="paymentMethod.php">
+                <i class="fas fa-history"></i> Audit Trails
+            </a>
+        </li> -->
     </ul>
 </nav>
 

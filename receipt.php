@@ -60,7 +60,12 @@
 </head>
 
 <body>
-	<?php include('navbar.php'); ?>
+	<?php include('navbar.php');
+	if (isset($_GET['data'])) {
+		$result = json_decode($_GET['data'], true);
+	} else {
+		$result = []; // Default empty array if no data is passed
+	} ?>
 
 	<div class="container mb-5" id="table_style">
 		<div class="card print-content">
@@ -106,20 +111,32 @@
 							<td class="fw-bold">Amount</td>
 						</tr>
 						<?php
-						$totalamount = 0; // Initialize total amount
-						foreach ($_SESSION['getReciept'] as $rows):
-							$items = $cartObj->getMenuForReciept($rows['menuId']);
-							$subtotal = ($items[1] * $rows['qty']); // Calculate subtotal
-							$totalamount += $subtotal; // Accumulate total amount
+						$totalamount = 0;
+						foreach ($result as $row):
+							$subtotal = $row['price'] * $row['checkout_Qty'];
+							$totalamount += $subtotal;
+							$paymentMethod = $row['payment_method'];
 							?>
 							<tr>
-								<td><?= htmlspecialchars($items[0]) ?></td>
-								<td><?= htmlspecialchars(number_format($items[1], 2)) ?></td>
-								<td><?= htmlspecialchars($rows['qty']) ?></td>
+								<td><?= htmlspecialchars($row['title']) ?></td>
+								<td><?= htmlspecialchars(number_format($row['price'], 2)) ?></td>
+								<td><?= htmlspecialchars($row['checkout_Qty']) ?></td>
 								<td><?= htmlspecialchars(number_format($subtotal, 2)) ?></td>
+
 							</tr>
 						<?php endforeach; ?>
-
+						<tr style="border-top: 1px solid #000;">
+							<td colspan='3'>
+								<?= $paymentMethod ?>
+							</td>
+							<?php
+							if ($paymentMethod == 'Cash On Delivery') {
+								echo "<td  class='total'>
+										50.00
+							</td>";
+							}
+							?>
+						</tr>
 						<tr style="border-top: 1px solid #000;">
 							<td colspan="3" class="total" style="padding-top: 10px">Subtotal</td>
 							<td class="total" style="padding-top: 10px">
@@ -196,7 +213,6 @@
 							}
 						}
 				</style>` +
-
 					'</head><body>'
 				);
 				printWindow.document.write(content);
