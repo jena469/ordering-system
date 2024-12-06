@@ -7,24 +7,23 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Add Bank</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    style="width: 1px; height: 1px;"></button>
             </div>
             <div class="modal-body">
                 <form id="addBankForm">
                     <div class="row">
                         <div class="col">
-                            <label for="name">Bank Name</label>
+                            <label for="name">E-wallet</label>
                             <select class="form-control" id="nameBank" name="nameBank" required>
-                                <option value="" disabled selected>Select Bank Name</option>
+                                <option value="" disabled selected>Select E-wallet Name</option>
                                 <option value="GCASH">GCASH</option>
                                 <option value="MAYA">MAYA</option>
-                                <option value="UNION BANK">UNION BANK</option>
-                                <option value="BDO">BDO</option>
                             </select>
                         </div>
                         <div class="col">
-                            <label for="accountNumber">Account Number</label>
-                            <input type="number" class="form-control" id="accountNumber" placeholder="Account Number"
+                            <label for="accountNumber">E-wallet Number</label>
+                            <input type="number" class="form-control" id="accountNumber" placeholder="E-wallet Number"
                                 name="accountNumber" required>
                         </div>
                     </div>

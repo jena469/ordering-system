@@ -12,8 +12,8 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav ml-auto">
                 <li class="nav-item">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                    <div class="dropdown me-5">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
                             aria-expanded="false">
                             <i class="fas fa-user mr-1"></i>Admin
                         </button>
@@ -29,12 +29,11 @@
     </div>
 </nav>
 
-<!-- Sidebar  -->
-<nav id="sidebar">
+
+<nav id="sidebar" class="">
     <div class="sidebar-header">
-        <img style="border-radius: 50%;"
-            src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/restaurant-logo-template-design-deaa426a55e5dc6d4604fe46f2bb543a_screen.jpg?ts=1566606296"
-            width="40" height="40" alt="logo"> <span class="ml-2">Benzamor</span>
+        <img style="border-radius: 50%;" src="./img/logo.jpg" width="40" height="40" alt="logo"> <span
+            class="ml-2">Benzamor</span>
     </div>
 
     <ul class="list-unstyled components">

@@ -1329,16 +1329,20 @@ if (!isset($_POST['CheckOut'])): ?>
                     case -1:
                         $message = 'You order was pending&nbsp';
                         break;
-                    case 1:
-                        $message = 'You order was to shipped';
-                        break;
                     case 0:
                         $message = 'You order was  approved';
                         break;
-
-                    default:
-                        $message = 'You order was delivered ';
+                    case 1:
+                        $message = 'You order was to shipped';
                         break;
+                    case 2:
+                        $message = 'You order was  to shipped';
+                        break;
+                    case 3:
+                        $message = 'You order was  delivered';
+                        break;
+
+
                 }
                 $bgColor = ($row['active'] == 2) ? 'background-color: lightgray;' : 'background-color: white;';
                 $transaction_id = $row['transaction_id'];

@@ -92,7 +92,11 @@ ORDER BY ck.checkout_id DESC;
     public function getNotificationContent($customerID)
     {
         try {
-            $stmt = $this->connect()->prepare("SELECT * FROM `tbl_checkout` WHERE active IN ('2', '3','-1','0') AND reg_id='$customerID' ORDER BY delivered_date DESC; ");
+            $stmt = $this->connect()->prepare("SELECT * FROM `tbl_checkout` 
+                                                        WHERE active IN ('2', '3','-1','0') 
+                                                        AND reg_id='$customerID'
+                                                            GROUP BY transaction_id  
+                                                        ORDER BY delivered_date ASC, checkout_id DESC; ");
             $stmt->execute();
 
             $arr = array();
@@ -114,13 +118,11 @@ ORDER BY ck.checkout_id DESC;
     {
         $active = 3;
         try {
-            // Update the SQL query to set the active status correctly
             $stmt = $this->connect()->prepare("UPDATE `tbl_checkout` SET active = :active WHERE checkout_id = :ckid");
 
-            // Bind the parameters correctly
             $stmt->execute([
                 'active' => $active,
-                'ckid' => $ckid // Changed from 'checkout_id' to 'ckid' to match the query
+                'ckid' => $ckid
             ]);
         } catch (Exception $e) {
             echo "Can't update notif: " . $e->getMessage();

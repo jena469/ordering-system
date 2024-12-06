@@ -41,7 +41,7 @@
 								<div classclass="form-group mt-4">
 									<label>Proof of Payment:</label>
 									<input type="file" id="gcashReciept" name="gcashReciept" class="form-control"
-										required>
+										accept="image/*" required>
 								</div>
 							</div>
 

@@ -58,7 +58,7 @@ if (
 
         const handleClick = (isApproved = true, checkoutID, transaction_id) => {
             const baseTxt = isApproved ? "approve" : "reject";
-            console.log(transaction_id)
+            console.log(isApproved)
             if (isApproved) {
                 // Approval SweetAlert
                 Swal.fire({
@@ -132,14 +132,16 @@ if (
                                 body: JSON.stringify({
                                     isApproved,
                                     checkoutID,
+                                    transaction_id,
                                     reason // Send the reason for rejection
                                 })
                             });
 
-                            setTimeout(() => {
-                                window.location.href =
-                                    './parcelClient.php'; // Redirect to another page
-                            }, 1000); // Delay of 1 second (1000 milliseconds)
+                            // setTimeout(() => {
+                            //     window.location.href =
+                            //         './parcelClient.php'; // Redirect to another page
+                            // }, 1000); 
+                            // Delay of 1 second (1000 milliseconds)
                         } else {
                             Swal.fire(
                                 'No Reason Provided',
@@ -156,7 +158,6 @@ if (
     <?php include('Modal/deliveryProof_modal.php');
     include('footer.php'); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="path/to/your/custom/script.js"></script>
 
 </body>
 
